@@ -147,13 +147,17 @@ class AppServiceProvider extends ServiceProvider {
 
 ```
 
-Then access the same repository instance anywhere in your app :)
+Add a line like this on every file you call the repository in order to keep code clean and pretty ;)
 
 ```php
 
 use App\Repositories\UserRepository;
 
-# some code in the middle, may be used into a Controller's method
+```
+
+Then access the same repository instance anywhere in your app :)
+
+```php
 
 app( UserRepository::class )
 
