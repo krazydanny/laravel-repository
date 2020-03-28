@@ -27,6 +27,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 			- [Write Back](#write-back)
 			- [Write Through](#write-through)
 	- [Pretty Queries](#pretty-queries)
+	- [Bonus Features](#bonus-features)
 
 
 <br>
