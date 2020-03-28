@@ -207,9 +207,9 @@ Making Eloquent Queries
 
 Unlike get() or save(), query methods work a little different. They receive as parameter the desired query builder instance (Illuminate\Database\Eloquent\Builder) in order to execute the query.
 
-It will allow you to combine queries with caching strategies, as we will cover forward on this document. For now let's focus on the query methods only. For example:
+This will allow us to combine queries with caching strategies, as we will cover forward on this document. For now let's focus on the query methods only. For example:
 
-To find all models under a certain criteria
+To find all models under a certain criteria:
 ```php
 
 $q = User::where( 'active', true );
@@ -218,7 +218,7 @@ $userCollection = $userRepository->find( $q );
 
 ```
 
-To get the first model instance under a certain criteria
+To get the first model instance under a certain criteria:
 ```php
 
 $q = User::where( 'active', true );
@@ -227,7 +227,7 @@ $user = $userRepository->first( $q );
 
 ```
 
-To count all model instances under a certain criteria
+To count all model instances under a certain criteria:
 ```php
 
 $q = User::where( 'active', true );
