@@ -47,13 +47,13 @@ Laravel Model Repository simplifies caching strategies using human-readable chai
 
 Current available methods for caching Laravel models store the entire PHP object in cache. That consumes a lot of extra storage and results in slower response times, therefore having a more expensive infrastructure.
 
-Laravel Model Repository stores only the business specific data of your model necesary to recreate exactly the same instance later, after being loaded by PHP. Saving more than 50% of cache storage and significantly reducing response times from the cache server.
+Laravel Model Repository stores only the business specific data of your model in order to recreate exactly the same instance later (after data being loaded from cache). Saving more than 50% of cache storage and significantly reducing response times from the cache server.
 
 <br>
 
 Installation
 ------------
-Make sure you have configured a cache connection and driver in your Laravel project. You can find cache configuration instructions for Laravel at https://laravel.com/docs/6.x/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
+Make sure you have properly configured a cache connection and driver in your Laravel/Lumen project. You can find cache configuration instructions for Laravel at https://laravel.com/docs/6.x/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
 
 
 ### Laravel version Compatibility
@@ -88,6 +88,8 @@ $ composer require krazydanny/laravel-repository
 Creating a Repository for a Model
 ---------------------------------	
 
+In order to simplify caching strategies we will encapsulate model access into a model repository.
+
 Two parameters are required by the constructor. The first parameter is the model's full class name. The second parameter is the prefix to be used in cache to store model data.
 
 
@@ -119,7 +121,7 @@ Use with Singleton Pattern
 
 As a good practice to improve performance and keep your project simple is strongly recommended to use repositories along with the singleton pattern, avoiding the need for creating separate instances for the same repository at different project levels.
 
-First register the singleton call in a service provider.
+First register the singleton call in a service provider:
 
 ```php
 
