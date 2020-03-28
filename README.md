@@ -18,14 +18,13 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Calling built-in Eloquent methods](#calling-built-in-eloquent-methods)
 	- [Making Eloquent Queries](#making-eloquent-queries)
-	- [Caching methods overview](#methods-overview)	
-	- [Implementing Caching Strategies](#caching-strategies)
-		- [Read Strategies](#read-strategies)
-			- [Read Aside](#read-aside)
-			- [Read Through](#read-through)
-		- [Write Strategies](#write-strategies)
-			- [Write Back](#write-back)
-			- [Write Through](#write-through)
+	- [Caching methods overview](#caching-methods-overview)	
+	- [Implementing Caching Strategies](#implementing-caching-strategies)
+		- [Read Aside](#read-aside)
+		- [Read Through](#read-through)
+		- [Write Back](#write-back)
+		- [Write Arround](#write-arround)
+		- [Write Through](#write-through)
 	- [Pretty Queries](#pretty-queries)
 	- [Bonus Features](#bonus-features)
 
@@ -460,7 +459,7 @@ $firstUser = app( UserRepository::class )->rememberForever()->first( $q );
 
 **How it works?**
 
-Model or Query results are always stored in cache and database.
+Models are always stored in cache and database.
 
 
 **Use cases**
@@ -513,5 +512,70 @@ $user = app( UserRepository::class )->remember()->during( 3600 )->create([
 $user->active = false;
 
 app( UserRepository::class )->remember()->during( 3600 )->save( $user );
+
+```
+
+### Write-Back Cache
+
+<p align="center">
+  <img alt="Write Back Caching" src="https://github.com/krazydanny/laravel-repository/blob/master/write-back-cache.png">
+</p>
+
+**How it works?**
+
+Models are stored only in cache until they are massively persisted in database.
+
+
+**Use cases**
+
+Used in heavy write load scenarios and when cache consistency must be granted.
+
+
+**Pros**
+
+Resilient to database failures and downtimes 
+
+**Cons**
+
+In some cache failure scenarios data may be permanently lost.
+
+
+**Usage**
+
+* IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY *
+
+When detecting you want a model to be remembered in cache, Laravel Model Repository will automatically store it in cache and database (inserting or updating depending on the case).
+
+
+First write models in cache (ONLY):
+```php
+app( UserRepository::class )->log( $model );
+
+```
+
+Then massively persist them in database:
+```php
+app( UserRepository::class )->sync( 
+
+	// a callback that returns true if models were persisted successfully, false otherwise
+    function( $collection ) {
+        
+        foreach ( $collection as $model ) {
+            // do database library specific logic here
+
+        }        
+
+        if ( $result )
+            return true; // if true remove model ids from sync queue
+        
+        return false; // if false keeps model ids in sync queue and tries again next time sync method is called
+    },
+    [
+        'written_since' => 0, // process only models written since ths specified timestamp in seconds
+        'written_until' => \time(), // process only models written until the given timestamp in seconds
+        'object_limit'  => 500, // the object limit to be processed at the same time (to prevent memory overflows)
+        'clean_cache'   => true, // if callback returns true, marks models as persisted
+    ] 
+);
 
 ```
