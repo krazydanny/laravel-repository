@@ -151,7 +151,7 @@ Then access the same repository instance anywhere in your app :)
 
 ```php
 
-app( App\UserRepository::class );
+app( App\UserRepository::class )
 
 ```
 
@@ -160,13 +160,13 @@ app( App\UserRepository::class );
 Calling built-in Eloquent methods
 ---------------------------------
 
-Calling the native Eloquent Model methods from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
+Calling native Eloquent Model methods from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
 
 
 Create a new model:
 ```php
 
-$user = $userRepository->create([
+$user = app( App\UserRepository::class )->create([
 	'firstname' => 'Krazy',
 	'lastname'  => 'Danny',
 	'email'	    => 'somecrazy@email.com',
@@ -181,7 +181,7 @@ $user_id = $user->getKey();
 Get a specific model by ID:
 ```php
 
-$user = $userRepository->get( $user_id );
+$user = app( App\UserRepository::class )->get( $user_id );
 
 ```
 
@@ -191,7 +191,7 @@ Update a specific model:
 
 $user->active = false;
 
-$userRepository->save( $user );
+app( App\UserRepository::class )->save( $user );
 
 ```
 
@@ -200,7 +200,7 @@ Delete a specific model:
 ```php
 
 
-$userRepository->delete( $user );
+app( App\UserRepository::class )->delete( $user );
 
 ```
 
@@ -219,7 +219,7 @@ To find all models under a certain criteria:
 
 $q = User::where( 'active', true );
 
-$userCollection = $userRepository->find( $q );
+$userCollection = app( App\UserRepository::class )->find( $q );
 
 ```
 
@@ -228,7 +228,7 @@ To get the first model instance under a certain criteria:
 
 $q = User::where( 'active', true );
 
-$user = $userRepository->first( $q );
+$user = app( App\UserRepository::class )->first( $q );
 
 ```
 
@@ -237,7 +237,7 @@ To count all model instances under a certain criteria:
 
 $q = User::where( 'active', true );
 
-$userCount = $userRepository->count( $q );
+$userCount = app( App\UserRepository::class )->count( $q );
 
 ```
 
