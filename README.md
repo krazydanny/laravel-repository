@@ -366,7 +366,7 @@ Works best for heavy read workload scenarios and general purpose.
 **Usage**
 
 
-When detecting you want a model or query to be remembered in cache for a certain period of time, Laravel Repository Model will automatically first try to retrieve it from cache. If it doesn't will automatically retrieve it from database and store it in cache for the next time :)
+When detecting you want a model or query to be remembered in cache for a certain period of time, Laravel Repository Model will automatically first try to retrieve it from cache. Otherwise will automatically retrieve it from database and store it in cache for the next time :)
 
 
 Read a specific model by ID:
