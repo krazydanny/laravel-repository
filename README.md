@@ -350,7 +350,7 @@ Implementing Caching Strategies
 ### Read-Aside Cache
 
 <p align="center">
-  <img alt="Read Aside Caching" src="https://github.com/krazydanny/umany-api/blob/dev/read-aside-cache.png">
+  <img alt="Read Aside Caching" src="https://github.com/krazydanny/laravel-repository/blob/master/read-aside-cache.png">
 </p>
 
 **How it works?**
