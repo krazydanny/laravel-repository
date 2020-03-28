@@ -1,7 +1,7 @@
 Laravel Model Repository
 ========================
 
-[![Latest Stable Version](https://img.shields.io/github/v/release/krazydanny/larave-repository)](https://packagist.org/packages/krazydanny/laravel-repository) [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)
+[![Latest Stable Version](https://img.shields.io/github/v/release/krazydanny/laravel-repository)](https://packagist.org/packages/krazydanny/laravel-repository) [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)
 
 This package provides an abstraction layer for easily implementing industry-standard caching strategies with Eloquent models.
 
@@ -38,7 +38,7 @@ Main Features
 
 ### Simplify caching strategies and buy time
 
-Implementing high availability and concurrency caching strategies could be a complex and time consuming task without the appropiate abstraction layer. 
+Implementing high availability and concurrency caching strategies could be a complex and time consuming task without the appropiate abstraction layer.
 
 Laravel Model Repository simplifies caching strategies using human-readable chained methods for your existing Eloquent models :)
 
@@ -275,7 +275,7 @@ Also a model instance could be passed as parameter in order to store that specif
 ```php
 
 
-app( UserRepository::class )->remember( $user )->during( 1440 );
+app( UserRepository::class )->remember( $user )->during( 3600 );
 
 ```
 
@@ -304,6 +304,62 @@ app( UserRepository::class )->rememberForever( $user );
 
 ```
 
+
+### forget()
+
+This method removes one or many models or queries from cache. Is very useful when you update a model and need cached queries or dependencies to be refreshed in real time.
+
+The first parameter must be an instance of the model, a specific model ID (primary key) or a query builder instance (Illuminate\Database\Eloquent\Builder).
+
+
+Forget query results
+```php
+
+$query = User::where( 'active', true );
+
+app( UserRepository::class )->forget( $query );
+
+```
+
+Forget a specific model using the object
+```php
+
+app( UserRepository::class )->forget( $userModelInstance );
+
+```
+
+Forget a specific model by id
+```php
+
+app( UserRepository::class )->forget( $user_id );
+
+```
+
+The second parameter (optional) could be an array to queue forget() operations in order to be done in a single request to the cache server. 
+
+When passed the forget() method appends to the array the removal operations instead of sending them instantly to the cache server.
+
+It's very usefull when you need to expire many cached queries or models of the same repository. You can do it in one request optimizing response times. 
+
+For example:
+```php
+
+$user->active = false;
+$user->save();
+
+$forgets = [];
+
+#removes user model from cache
+app( UserRepository::class )->forget( $user, $forgets );
+
+#removes query that finds active users
+$query = User::where( 'active', true );
+app( UserRepository::class )->forget( $query, $forgets );
+
+#requests all queued removals to the cache server
+app( UserRepository::class )->forget( $forgets );
+
+```
 
 
 Implementing Caching Strategies
