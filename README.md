@@ -3,15 +3,16 @@ Laravel Repository
 
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)
 
-This package provides an abstraction layer for implementing industry-standard caching strategies for Eloquent models
-
+This package provides an abstraction layer for easily implementing industry-standard caching strategies with Eloquent models.
 
 
 - [Laravel Repository](#laravel-repository)
 	- [Installation](#installation)
 		- [Laravel version Compatibility](#laravel-version-compatibility)
 		- [Lumen version Compatibility](#lumen-version-compatibility)
-	- [Create a Repository for a Model](#create-repository)
+		- [Install the package via Composer](#install-the-package-via-composer)
+	- [Create a Repository for a Model](#create-a-repository-for-a-model)
+	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Calling Eloquent Model methods](#model-methods)
 	- [Making Eloquent Queries](#eloquent-queries)
 	- [Implementing Caching Strategies](#caching-strategies)
@@ -25,7 +26,8 @@ This package provides an abstraction layer for implementing industry-standard ca
 
 Installation
 ------------
-Make sure you have configured a cache connection and driver in your Laravel project. You can find installation instructions for Laravel at https://laravel.com/docs/5.8/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
+Make sure you have configured a cache connection and driver in your Laravel project. You can find cache configuration instructions for Laravel at https://laravel.com/docs/6.x/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
+
 
 ### Laravel version Compatibility
 
@@ -36,7 +38,8 @@ Make sure you have configured a cache connection and driver in your Laravel proj
  5.8.x    | 0.9.x
  6.x      | 0.9.x
 
- ### Lumen version Compatibility
+
+### Lumen version Compatibility
 
  Lumen    | Package
 :---------|:----------
@@ -46,11 +49,19 @@ Make sure you have configured a cache connection and driver in your Laravel proj
  6.x      | 0.9.x
 
 
-Install the package via Composer:
+
+### Install the package via Composer
 
 ```bash
 $ composer require krazydanny/laravel-repository
 ```
+
+
+Create a Repository for a Model
+-------------------------------
+
+To parameters are required by the constructor. The first parameter is Model's full class name. The second one is the prefix to be used to store models in cache.
+
 
 ```php
 
@@ -69,5 +80,49 @@ class UserRepository extends Repository {
 		);
 	}
 }
+
+```
+
+
+Use with Singleton Pattern
+-------------------------------
+
+First register the Singleton call in a Service Provider.
+
+```php
+
+namespace App\Providers;
+
+use App\Repositories\UserRepository;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider {
+
+    public function register() {
+
+        $this->app->singleton( 
+           UserRepository::class, 
+            function () {
+                return (new UserRepository);
+            }
+        );
+
+```
+
+Then access the same Repository instance anywhere in your app :)
+
+```php
+
+app( App\UserRepository::class )
+
+```
+
+
+Calling Eloquent Model methods
+-------------------------------
+
+```php
+
+
 
 ```
