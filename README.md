@@ -542,7 +542,7 @@ In some cache failure scenarios data may be permanently lost.
 
 **Usage**
 
-* IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY *
+*IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY*
 
 When detecting you want a model to be remembered in cache, Laravel Model Repository will automatically store it in cache and database (inserting or updating depending on the case).
 
@@ -557,7 +557,7 @@ Then massively persist them in database:
 ```php
 app( UserRepository::class )->sync( 
 
-	// a callback that returns true if models were persisted successfully, false otherwise
+// a callback that returns true if models were persisted successfully, false otherwise
     function( $collection ) {
         
         foreach ( $collection as $model ) {
