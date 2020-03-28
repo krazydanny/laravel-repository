@@ -8,9 +8,18 @@ This package provides an abstraction layer for implementing industry-standard ca
 
 
 - [Laravel Repository](#laravel-repository)
+	- [Laravel version Compatibility](#laravel-version-compatibility)
 	- [Installation](#installation)
-		- [Laravel version Compatibility](#laravel-version-compatibility)
-	- [First Steps](#first-steps)
+	- [Create a Repository for a Model](#create-repository)
+	- [Calling Model methods](#model-methods)
+	- [Making Eloquent Queries](#eloquent-queries)
+	- [Implementing Caching Strategies](#caching-strategies)
+		- [Read Strategies](#read-strategies)
+			- [Read Aside](#read-aside)
+			- [Read Through](#read-through)
+		- [Write Strategies](#write-strategies)
+			- [Write Back](#write-back)
+			- [Write Through](#write-through)
 
 
 ```php
