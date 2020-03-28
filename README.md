@@ -13,7 +13,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Install the package via Composer](#install-the-package-via-composer)
 	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
-	- [Calling Eloquent Model methods](#model-methods)
+	- [Calling built-in Eloquent methods](#calling-built-in-eloquent-methods)
 	- [Making Eloquent Queries](#eloquent-queries)
 	- [Implementing Caching Strategies](#caching-strategies)
 		- [Read Strategies](#read-strategies)
@@ -120,8 +120,8 @@ app( App\UserRepository::class )
 ```
 
 
-Calling Eloquent Model methods
-------------------------------
+Calling built-in Eloquent methods
+---------------------------------
 
 Calling the native Eloquent Model methods from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
 
@@ -150,11 +150,53 @@ $user = $userRepository->get( $user_id );
 ```
 
 
-Update a specific model instance
+Update a specific model
 ```php
 
 $user->active = false;
 
 $userRepository->save( $user );
+
+```
+
+
+Delete a specific model
+```php
+
+
+$userRepository->delete( $user );
+
+```
+
+
+Making Eloquent Queries
+-----------------------
+
+Unlike get() or save(), query methods work a little different. They receive as parameter the desired query builder instance (Illuminate\Database\Eloquent\Builder) in order to execute the query. For example:
+
+To find all models under a certain criteria
+```php
+
+$q = User::where( 'active', true );
+
+$userCollection = $userRepository->find( $q );
+
+```
+
+To get the first model instance under a certain criteria
+```php
+
+$q = User::where( 'active', true );
+
+$user = $userRepository->first( $q );
+
+```
+
+To count all model instances under a certain criteria
+```php
+
+$q = User::where( 'active', true );
+
+$userCount = $userRepository->count( $q );
 
 ```
