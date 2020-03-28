@@ -1,4 +1,3 @@
-
 Laravel Model Repository (COMMING SOON!)
 ========================
 
@@ -350,7 +349,7 @@ Implementing Caching Strategies
 ### Read-Aside Cache
 
 <p align="center">
-  <img alt="Read Aside Caching" src="https://github.com/krazydanny/laravel-repository/blob/master/read-aside-cache.png">
+  <img alt="Read Aside Caching" src="https://github.com/krazydanny/umany-api/blob/dev/read-aside-cache.png">
 </p>
 
 **How it works?**
@@ -370,13 +369,13 @@ Works best for heavy read workload scenarios and general purpose.
 When detecting you want a model or query to be remembered in cache for a certain period of time, Laravel Repository Model will automatically first try to retrieve it from cache. If it doesn't will automatically retrieve it from database and store it in cache for the next time :)
 
 
-Get a specific model by ID:
+Read a specific model by ID:
 ```php
 $user = app( UserRepository::class )->remember()->during( 3600 )->get( $user_id );
 
 ```
 
-Execute a query:
+Read query results:
 ```php
 $q = User::where( 'active', true );
 
