@@ -9,7 +9,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 - [Laravel Model Repository](#laravel-model-repository)
 	- [Main Features](#main-features)
 		- [Simplify caching strategies and buy time](#simplify-caching-strategies-and-buy-time)	
-		- [Save cache storage and money](#saves-cache-storage-and-money)
+		- [Save cache storage and money](#save-cache-storage-and-money)
 	- [Installation](#installation)
 		- [Laravel version Compatibility](#laravel-version-compatibility)
 		- [Lumen version Compatibility](#lumen-version-compatibility)
@@ -40,7 +40,7 @@ Implementing high availability and concurrency caching strategies could be a com
 Laravel Model Repository simplifies caching strategies using human-readable chained methods for your existing Eloquent models :)
 
 
-### Saves cache storage and money
+### Save cache storage and money
 
 Current available methods for caching Laravel models store the entire PHP object in cache. That consumes a lot of extra storage and results in slower response times, therefore having a more expensive infrastructure.
 
