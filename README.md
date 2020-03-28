@@ -44,7 +44,7 @@ Laravel Model Repository simplifies caching strategies using human-readable chai
 
 Current available methods for caching Laravel models store the entire PHP object in cache. That consumes a lot of extra storage and results in slower response times, therefore having a more expensive infrastructure.
 
-Laravel Model Repository stores only the business specific data of your model's instance necesary to recreate exactly the same later, once it's loaded by PHP. Saving more than 50% of cache storage and significantly reducing response times from the cache server.
+Laravel Model Repository stores only the business specific data of your model necesary to recreate exactly the same instance later, after being loaded by PHP. Saving more than 50% of cache storage and significantly reducing response times from the cache server.
 
 
 
