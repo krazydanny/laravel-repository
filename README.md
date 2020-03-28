@@ -317,7 +317,7 @@ This method removes one or many models (or queries) from cache. It's very useful
 The first parameter must be an instance of the model, a specific model ID (primary key) or a query builder instance (Illuminate\Database\Eloquent\Builder).
 
 
-Forget query results
+Forget query results:
 ```php
 $query = User::where( 'active', true );
 
@@ -325,13 +325,13 @@ app( UserRepository::class )->forget( $query );
 
 ```
 
-Forget a specific model using the object
+Forget a specific model using the object:
 ```php
 app( UserRepository::class )->forget( $userModelInstance );
 
 ```
 
-Forget a specific model by id
+Forget a specific model by id:
 ```php
 app( UserRepository::class )->forget( $user_id );
 
@@ -402,5 +402,43 @@ Read-Aside query results:
 $q = User::where( 'active', true );
 
 $userCollection = app( UserRepository::class )->remember()->during( 3600 )->find( $q );
+
+```
+
+
+### Read-Through Cache
+
+<p align="center">
+  <img alt="Read Through Caching" src="https://github.com/krazydanny/umany-api/blob/dev/read-through-cache.png">
+</p>
+
+**How it works?**
+
+1. The app first looks the desired model or query in the cache. If the data is found in cache, we’ve cache hit. The model or query results are read and returned to the client without database workload at all.
+2. If model or query results were not found in cache we have a cache miss, then data is retrieved from database ONLY THIS TIME in order to be always available from cache.
+
+
+**Use cases**
+
+Works best for heavy read workload scenarios where the same model or query is requested constantly.
+
+
+**Usage**
+
+
+When detecting you want a model or query to be remembered in cache forever, Laravel Repository Model will automatically first try to retrieve it from cache. Otherwise will automatically retrieve it from database and store it without expiration, so it will be always available form cache :)
+
+
+Read-Through a specific model by ID:
+```php
+$user = app( UserRepository::class )->rememberForever()->get( $user_id );
+
+```
+
+Read-Through query results:
+```php
+$q = User::where( 'active', true );
+
+$userCollection = app( UserRepository::class )->rememberForever()->find( $q );
 
 ```
