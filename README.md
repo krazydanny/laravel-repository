@@ -388,7 +388,7 @@ Works best for heavy read workload scenarios and general purpose.
 **Usage**
 
 
-When detecting you want a model or query to be remembered in cache for a certain period of time, Laravel Repository Model will automatically first try to retrieve it from cache. Otherwise will automatically retrieve it from database and store it in cache for the next time :)
+When detecting you want a model or query to be remembered in cache for a certain period of time, Laravel Model Repository will automatically first try to retrieve it from cache. Otherwise will automatically retrieve it from database and store it in cache for the next time :)
 
 
 Read-Aside a specific model by ID:
@@ -402,6 +402,10 @@ Read-Aside query results:
 $q = User::where( 'active', true );
 
 $userCollection = app( UserRepository::class )->remember()->during( 3600 )->find( $q );
+
+$userCount = app( UserRepository::class )->remember()->during( 3600 )->count( $q );
+
+$firstUser = app( UserRepository::class )->remember()->during( 3600 )->first( $q );
 
 ```
 
@@ -426,7 +430,7 @@ Works best for heavy read workload scenarios where the same model or query is re
 **Usage**
 
 
-When detecting you want a model or query to be remembered in cache forever, Laravel Repository Model will automatically first try to retrieve it from cache. Otherwise will automatically retrieve it from database and store it without expiration, so it will be always available form cache :)
+When detecting you want a model or query to be remembered in cache forever, Laravel Model Repository will automatically first try to retrieve it from cache. Otherwise will automatically retrieve it from database and store it without expiration, so it will be always available form cache :)
 
 
 Read-Through a specific model by ID:
@@ -440,5 +444,74 @@ Read-Through query results:
 $q = User::where( 'active', true );
 
 $userCollection = app( UserRepository::class )->rememberForever()->find( $q );
+
+$userCount = app( UserRepository::class )->rememberForever()->count( $q );
+
+$firstUser = app( UserRepository::class )->rememberForever()->first( $q );
+
+```
+
+
+### Write-Through Cache
+
+<p align="center">
+  <img alt="Write Through Caching" src="https://github.com/krazydanny/laravel-repository/blob/master/write-through-cache.png">
+</p>
+
+**How it works?**
+
+Model or Query results are always stored in cache and database.
+
+
+**Use cases**
+
+Used in scenarios where consistency is a priority or needs to be granted.
+
+
+**Pros**
+
+No cache invalidation techniques required. No need for using forget() method.
+
+**Cons**
+
+Could introduce write latency in some scenarios because data is always written in cache and database.
+
+
+**Usage**
+
+When detecting you want a model to be remembered in cache, Laravel Model Repository will automatically store it in cache and database (inserting or updating depending on the case).
+
+
+Write-Through without expiration time:
+```php
+# create a new user in cache and database
+$user = app( UserRepository::class )->rememberForever()->create([
+	'firstname' => 'Krazy',
+	'lastname'  => 'Danny',
+	'email'	    => 'somecrazy@email.com',
+	'active'    => true,
+]);
+
+# update an existing user in cache and database
+$user->active = false;
+
+app( UserRepository::class )->rememberForever()->save( $user );
+
+```
+
+Write-Through with expiration time (TTL):
+```php
+# create a new user in cache and database
+$user = app( UserRepository::class )->remember()->during( 3600 )->create([
+	'firstname' => 'Krazy',
+	'lastname'  => 'Danny',
+	'email'	    => 'somecrazy@email.com',
+	'active'    => true,
+]);
+
+# update an existing user in cache and database
+$user->active = false;
+
+app( UserRepository::class )->remember()->during( 3600 )->save( $user );
 
 ```
