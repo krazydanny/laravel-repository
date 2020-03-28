@@ -1,7 +1,7 @@
 Laravel Repository
 ===============
 
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://www.paypal.me/dspadafora)
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)
 
 This package provides an abstraction layer for implementing industry-standard caching strategies for Eloquent models
 
