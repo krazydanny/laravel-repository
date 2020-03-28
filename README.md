@@ -288,6 +288,28 @@ app( UserRepository::class )->rememberForever( $user );
 ```
 
 
+### fromCache()
+
+Calling fromCache() before any query method like find(), first() or count() will try to retrieve the results from cache ONLY.
+
+
+```php
+$q = User::where( 'active', true );
+
+app( UserRepository::class )->fromCache()->find( $q );
+
+```
+
+
+Also a model instance could be passed as parameter in order to retrieve that specific model from cache ONLY.
+
+
+```php
+app( UserRepository::class )->fromCache( $user );
+
+```
+
+
 ### forget()
 
 This method removes one or many models (or queries) from cache. It's very useful when you update a model and need cached queries or dependencies to be refreshed in real time.
