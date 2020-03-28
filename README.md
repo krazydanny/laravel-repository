@@ -11,7 +11,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Laravel version Compatibility](#laravel-version-compatibility)
 		- [Lumen version Compatibility](#lumen-version-compatibility)
 		- [Install the package via Composer](#install-the-package-via-composer)
-	- [Create a Repository for a Model](#create-a-repository-for-a-model)
+	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Calling Eloquent Model methods](#model-methods)
 	- [Making Eloquent Queries](#eloquent-queries)
@@ -57,8 +57,8 @@ $ composer require krazydanny/laravel-repository
 ```
 
 
-Create a Repository for a Model
--------------------------------
+Creating a Repository for a Model
+---------------------------------	
 
 Two parameters are required by the constructor. The first parameter is the model's full class name. The second parameter is the prefix to be used in cache to store model data.
 
@@ -85,9 +85,9 @@ class UserRepository extends Repository {
 
 
 Use with Singleton Pattern
--------------------------------
+--------------------------
 
-As a good practice to improve performance and keep your project simple we strongly recommend to use repositories along with the singleton pattern, avoiding the need for creating separate instances for the same repository at different project levels.
+As a good practice to improve performance and keep your project simple is strongly recommended to use repositories along with the singleton pattern, avoiding the need for creating separate instances for the same repository at different project levels.
 
 First register the singleton call in a service provider.
 
@@ -121,10 +121,40 @@ app( App\UserRepository::class )
 
 
 Calling Eloquent Model methods
--------------------------------
+------------------------------
 
+Calling the native Eloquent Model methods from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
+
+
+
+Create a new model instance
 ```php
 
+$user = $userRepository->create([
+	'firstname' => 'Krazy',
+	'lastname'  => 'Danny',
+	'email'		=> 'somecrazy@email.com',
+	'active'	=> true,
+]);
 
+$user_id = $user->getKey();
+
+```
+
+
+Get a specific model instance by ID
+```php
+
+$user = $userRepository->get( $user_id );
+
+```
+
+
+Update a specific model instance
+```php
+
+$user->active = false;
+
+$userRepository->save( $user );
 
 ```
