@@ -135,6 +135,8 @@ class AppServiceProvider extends ServiceProvider {
                 return (new UserRepository);
             }
         );
+    }
+}
 
 ```
 
@@ -142,7 +144,7 @@ Then access the same repository instance anywhere in your app :)
 
 ```php
 
-app( App\UserRepository::class )
+app( App\UserRepository::class );
 
 ```
 
