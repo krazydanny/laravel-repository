@@ -8,10 +8,11 @@ This package provides an abstraction layer for implementing industry-standard ca
 
 
 - [Laravel Repository](#laravel-repository)
-	- [Laravel version Compatibility](#laravel-version-compatibility)
 	- [Installation](#installation)
+		- [Laravel version Compatibility](#laravel-version-compatibility)
+		- [Lumen version Compatibility](#lumen-version-compatibility)
 	- [Create a Repository for a Model](#create-repository)
-	- [Calling Model methods](#model-methods)
+	- [Calling Eloquent Model methods](#model-methods)
 	- [Making Eloquent Queries](#eloquent-queries)
 	- [Implementing Caching Strategies](#caching-strategies)
 		- [Read Strategies](#read-strategies)
@@ -21,6 +22,35 @@ This package provides an abstraction layer for implementing industry-standard ca
 			- [Write Back](#write-back)
 			- [Write Through](#write-through)
 
+
+Installation
+------------
+Make sure you have configured a cache connection and driver in your Laravel project. You can find installation instructions for Laravel at https://laravel.com/docs/5.8/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
+
+### Laravel version Compatibility
+
+ Laravel  | Package
+:---------|:----------
+ 5.6.x    | 0.9.x
+ 5.7.x    | 0.9.x
+ 5.8.x    | 0.9.x
+ 6.x      | 0.9.x
+
+ ### Lumen version Compatibility
+
+ Lumen    | Package
+:---------|:----------
+ 5.6.x    | 0.9.x
+ 5.7.x    | 0.9.x
+ 5.8.x    | 0.9.x
+ 6.x      | 0.9.x
+
+
+Install the package via Composer:
+
+```bash
+$ composer require krazydanny/laravel-repository
+```
 
 ```php
 
