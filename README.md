@@ -27,7 +27,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 			- [Write Back](#write-back)
 			- [Write Through](#write-through)
 
-
+<br><br>
 
 Main Features
 -------------
@@ -46,7 +46,7 @@ Current available methods for caching Laravel models store the entire PHP object
 
 Laravel Model Repository stores only the business specific data of your model necesary to recreate exactly the same instance later, after being loaded by PHP. Saving more than 50% of cache storage and significantly reducing response times from the cache server.
 
-
+<br><br>
 
 Installation
 ------------
@@ -80,6 +80,7 @@ Make sure you have configured a cache connection and driver in your Laravel proj
 $ composer require krazydanny/laravel-repository
 ```
 
+<br><br>
 
 Creating a Repository for a Model
 ---------------------------------	
@@ -106,6 +107,8 @@ class UserRepository extends Repository {
 }
 
 ```
+
+<br><br>
 
 
 Use with Singleton Pattern
@@ -143,6 +146,7 @@ app( App\UserRepository::class )
 
 ```
 
+<br><br>
 
 Calling built-in Eloquent methods
 ---------------------------------
@@ -157,8 +161,8 @@ Create a new model
 $user = $userRepository->create([
 	'firstname' => 'Krazy',
 	'lastname'  => 'Danny',
-	'email'	=> 'somecrazy@email.com',
-	'active'=> true,
+	'email'	    => 'somecrazy@email.com',
+	'active'    => true,
 ]);
 
 $user_id = $user->getKey();
@@ -192,6 +196,8 @@ $userRepository->delete( $user );
 
 ```
 
+<br><br>
+
 
 Making Eloquent Queries
 -----------------------
@@ -224,6 +230,8 @@ $q = User::where( 'active', true );
 $userCount = $userRepository->count( $q );
 
 ```
+
+<br><br>
 
 Implementing Caching Strategies
 -------------------------------
