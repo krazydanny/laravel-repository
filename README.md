@@ -159,7 +159,7 @@ Then access the same repository instance anywhere in your app :)
 
 ```php
 
-app( UserRepository::class )
+$userRepository = app( UserRepository::class );
 
 ```
 
