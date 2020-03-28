@@ -88,7 +88,7 @@ $ composer require krazydanny/laravel-repository
 Creating a Repository for a Model
 ---------------------------------	
 
-In order to simplify caching strategies we will encapsulate model access into a model repository.
+In order to simplify caching strategies we will encapsulate model access within a model repository.
 
 Two parameters are required by the constructor. The first parameter is the model's full class name. The second parameter is the prefix to be used in cache to store model data.
 
