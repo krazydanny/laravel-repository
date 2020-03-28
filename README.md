@@ -1,12 +1,16 @@
-Laravel Repository
-===============
+Laravel Model Repository
+========================
 
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)
 
 This package provides an abstraction layer for easily implementing industry-standard caching strategies with Eloquent models.
 
 
-- [Laravel Repository](#laravel-repository)
+- [Laravel Model Repository](#laravel-model-repository)
+	- [Main Features](#main-features)
+		- [Saves cache storage and money](#saves-cache-and-money)
+		- [Simplifies caching strategies](#simplifies-caching-strategies)
+		- [Optimized for Redis](#optimized-for-redis)
 	- [Installation](#installation)
 		- [Laravel version Compatibility](#laravel-version-compatibility)
 		- [Lumen version Compatibility](#lumen-version-compatibility)
@@ -14,7 +18,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Calling built-in Eloquent methods](#calling-built-in-eloquent-methods)
-	- [Making Eloquent Queries](#eloquent-queries)
+	- [Making Eloquent Queries](#making-eloquent-queries)
 	- [Implementing Caching Strategies](#caching-strategies)
 		- [Read Strategies](#read-strategies)
 			- [Read Aside](#read-aside)
@@ -22,6 +26,26 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Write Strategies](#write-strategies)
 			- [Write Back](#write-back)
 			- [Write Through](#write-through)
+
+
+
+Main Features
+-------------
+
+
+### Simplifies caching strategies
+
+Implementing high availability and concurrency caching strategies could be a complex and time consuming task without the appropiate abstraction layer. 
+
+Laravel Model Repository simplifies caching strategies using human-readable chained methods for your existing Eloquent models :)
+
+
+### Saves cache storage and money
+
+Current available methods for caching Laravel models store the entire PHP object in cache. That consumes a lot of extra storage and results in slower response times, therefore having a more expensive infrastructure.
+
+Laravel Model Repository stores only the business specific data of your model's instance necesary to recreate exactly the same later, once it's loaded by PHP. Saving more than 50% of cache storage and significantly reducing response times from the cache server.
+
 
 
 Installation
@@ -127,14 +151,14 @@ Calling the native Eloquent Model methods from our repository gives us the advan
 
 
 
-Create a new model instance
+Create a new model
 ```php
 
 $user = $userRepository->create([
 	'firstname' => 'Krazy',
 	'lastname'  => 'Danny',
-	'email'		=> 'somecrazy@email.com',
-	'active'	=> true,
+	'email'	=> 'somecrazy@email.com',
+	'active'=> true,
 ]);
 
 $user_id = $user->getKey();
@@ -142,7 +166,7 @@ $user_id = $user->getKey();
 ```
 
 
-Get a specific model instance by ID
+Get a specific model by ID
 ```php
 
 $user = $userRepository->get( $user_id );
@@ -200,3 +224,6 @@ $q = User::where( 'active', true );
 $userCount = $userRepository->count( $q );
 
 ```
+
+Implementing Caching Strategies
+-------------------------------
