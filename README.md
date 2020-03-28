@@ -8,9 +8,8 @@ This package provides an abstraction layer for easily implementing industry-stan
 
 - [Laravel Model Repository](#laravel-model-repository)
 	- [Main Features](#main-features)
-		- [Saves cache storage and money](#saves-cache-storage-and-money)
-		- [Simplifies caching strategies](#simplifies-caching-strategies)
-		- [Optimized for Redis](#optimized-for-redis)
+		- [Simplify caching strategies and buy time](#simplify-caching-strategies-and-buy-time)	
+		- [Save cache storage and money](#saves-cache-storage-and-money)
 	- [Installation](#installation)
 		- [Laravel version Compatibility](#laravel-version-compatibility)
 		- [Lumen version Compatibility](#lumen-version-compatibility)
@@ -20,6 +19,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Calling built-in Eloquent methods](#calling-built-in-eloquent-methods)
 	- [Making Eloquent Queries](#making-eloquent-queries)
 	- [Implementing Caching Strategies](#caching-strategies)
+		- [Methods Overview](#methods-overview)
 		- [Read Strategies](#read-strategies)
 			- [Read Aside](#read-aside)
 			- [Read Through](#read-through)
@@ -33,7 +33,7 @@ Main Features
 -------------
 
 
-### Simplifies caching strategies
+### Simplify caching strategies and buy time
 
 Implementing high availability and concurrency caching strategies could be a complex and time consuming task without the appropiate abstraction layer. 
 
