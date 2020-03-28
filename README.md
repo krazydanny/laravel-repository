@@ -151,7 +151,11 @@ Then access the same repository instance anywhere in your app :)
 
 ```php
 
-app( App\UserRepository::class )
+use App\Repositories\UserRepository;
+
+# some code in the middle, may be used into a Controller's method
+
+app( UserRepository::class )
 
 ```
 
@@ -166,7 +170,7 @@ Calling native Eloquent Model methods from our repository gives us the advantage
 Create a new model:
 ```php
 
-$user = app( App\UserRepository::class )->create([
+$user = app( UserRepository::class )->create([
 	'firstname' => 'Krazy',
 	'lastname'  => 'Danny',
 	'email'	    => 'somecrazy@email.com',
@@ -181,7 +185,7 @@ $user_id = $user->getKey();
 Get a specific model by ID:
 ```php
 
-$user = app( App\UserRepository::class )->get( $user_id );
+$user = app( UserRepository::class )->get( $user_id );
 
 ```
 
@@ -191,7 +195,7 @@ Update a specific model:
 
 $user->active = false;
 
-app( App\UserRepository::class )->save( $user );
+app( UserRepository::class )->save( $user );
 
 ```
 
@@ -200,7 +204,7 @@ Delete a specific model:
 ```php
 
 
-app( App\UserRepository::class )->delete( $user );
+app( UserRepository::class )->delete( $user );
 
 ```
 
@@ -219,7 +223,7 @@ To find all models under a certain criteria:
 
 $q = User::where( 'active', true );
 
-$userCollection = app( App\UserRepository::class )->find( $q );
+$userCollection = app( UserRepository::class )->find( $q );
 
 ```
 
@@ -228,7 +232,7 @@ To get the first model instance under a certain criteria:
 
 $q = User::where( 'active', true );
 
-$user = app( App\UserRepository::class )->first( $q );
+$user = app( UserRepository::class )->first( $q );
 
 ```
 
@@ -237,7 +241,7 @@ To count all model instances under a certain criteria:
 
 $q = User::where( 'active', true );
 
-$userCount = app( App\UserRepository::class )->count( $q );
+$userCount = app( UserRepository::class )->count( $q );
 
 ```
 
