@@ -6,6 +6,13 @@ Laravel Repository
 This package provides an abstraction layer for implementing industry-standard caching strategies for Eloquent models
 
 
+
+- [Laravel Repository](#laravel-repository)
+	- [Installation](#installation)
+		- [Laravel version Compatibility](#laravel-version-compatibility)
+	- [First Steps](#first-steps)
+
+
 ```php
 
 namespace App\Repositories;
