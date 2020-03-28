@@ -127,7 +127,7 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider {
 
-    public function register() {
+    public function register ( ) {
 
         $this->app->singleton( 
            UserRepository::class, 
@@ -136,6 +136,8 @@ class AppServiceProvider extends ServiceProvider {
             }
         );
     }
+
+    # other service provider methods here
 }
 
 ```
@@ -156,8 +158,7 @@ Calling built-in Eloquent methods
 Calling the native Eloquent Model methods from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
 
 
-
-Create a new model
+Create a new model:
 ```php
 
 $user = $userRepository->create([
@@ -172,7 +173,7 @@ $user_id = $user->getKey();
 ```
 
 
-Get a specific model by ID
+Get a specific model by ID:
 ```php
 
 $user = $userRepository->get( $user_id );
@@ -180,7 +181,7 @@ $user = $userRepository->get( $user_id );
 ```
 
 
-Update a specific model
+Update a specific model:
 ```php
 
 $user->active = false;
@@ -190,7 +191,7 @@ $userRepository->save( $user );
 ```
 
 
-Delete a specific model
+Delete a specific model:
 ```php
 
 
@@ -204,7 +205,9 @@ $userRepository->delete( $user );
 Making Eloquent Queries
 -----------------------
 
-Unlike get() or save(), query methods work a little different. They receive as parameter the desired query builder instance (Illuminate\Database\Eloquent\Builder) in order to execute the query. For example:
+Unlike get() or save(), query methods work a little different. They receive as parameter the desired query builder instance (Illuminate\Database\Eloquent\Builder) in order to execute the query.
+
+It will allow you to combine queries with caching strategies, as we will cover forward on this document. For now let's focus on the query methods only. For example:
 
 To find all models under a certain criteria
 ```php
