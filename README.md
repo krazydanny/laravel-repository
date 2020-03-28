@@ -155,7 +155,7 @@ use App\Repositories\UserRepository;
 
 ```
 
-Then access the same repository instance anywhere in your app :)
+Then access the same repository instance anywhere in your project :)
 
 ```php
 
