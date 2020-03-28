@@ -18,8 +18,8 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Calling built-in Eloquent methods](#calling-built-in-eloquent-methods)
 	- [Making Eloquent Queries](#making-eloquent-queries)
+	- [Caching methods overview](#methods-overview)	
 	- [Implementing Caching Strategies](#caching-strategies)
-		- [Methods Overview](#methods-overview)
 		- [Read Strategies](#read-strategies)
 			- [Read Aside](#read-aside)
 			- [Read Through](#read-through)
@@ -251,5 +251,62 @@ $userCount = app( UserRepository::class )->count( $q );
 
 <br>
 
+
+Caching methods overview
+------------------------
+
+### remember() & during()
+
+Calling remember() before any query method like find(), first() or count() stores the query result in cache for a given time. Always followed by the during() method, which defines the duration of the results in cache (TTL/Time-To-Live in seconds)
+
+
+```php
+
+$q = User::where( 'active', true );
+
+app( UserRepository::class )->remember()->during( 3600 )->find( $q );
+
+```
+
+
+Also a model instance could be passed as parameter in order to store that specific model in cache.
+
+
+```php
+
+
+app( UserRepository::class )->remember( $user )->during( 1440 );
+
+```
+
+
+
+### rememberForever()
+
+Calling rememberForever() before any query method like find(), first() or count() stores the query result in cache without an expiration time.
+
+
+```php
+
+$q = User::where( 'active', true );
+
+app( UserRepository::class )->rememberForever()->find( $q );
+
+```
+
+
+Also a model instance could be passed as parameter in order to store that specific model in cache without expiration.
+
+
+```php
+
+app( UserRepository::class )->rememberForever( $user );
+
+```
+
+
+
 Implementing Caching Strategies
 -------------------------------
+
+### Lumen version Compatibility
