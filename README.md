@@ -118,7 +118,7 @@ class UserRepository extends Repository {
 Use with Singleton Pattern
 --------------------------
 
-As a good practice to improve performance and keep your project simple is strongly recommended to use repositories along with the singleton pattern, avoiding the need for creating separate instances for the same repository at different project levels.
+As a good practice to improve performance and keep your code simple is strongly recommended to use repositories along with the singleton pattern, avoiding the need for creating separate instances for the same repository at different project levels.
 
 First register the singleton call in a service provider:
 
