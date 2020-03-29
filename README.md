@@ -26,6 +26,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Write Through](#write-through-cache)
 	- [Extending Laravel Model Repository](#extending-laravel-model-repository)
 		- [Pretty Queries](#pretty-queries)	
+	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
 	- [Bibliography](#bibliography)
 
 
@@ -612,7 +613,7 @@ class UserRepository extends Repository {
 
 		return $this->find(
 			User::where([
-				'state' => $state,
+				'state'      => $state,
 				'deleted_at' => null,
 			])
 		);
@@ -627,11 +628,25 @@ Then call a pretty query :)
 ```php
 $activeUsers = app( UserRepository::class )->findByState( 'active' );
 
-$activeUsers = app( UserRepository::class )->remember()->during(3600)->findByState( 'active' );
+$activeUsers = app( UserRepository::class )->remember()->during( 3600 )->findByState( 'active' );
 
 $activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'active' );
 
 ```
+
+<br>
+
+Some things I wish somebody told me before :)
+---------------------------------------------
+
+### "Be shapeless, like water my friend" (Bruce Lee) 
+
+There's no unique, best or does-it-all-right caching technique.
+
+Every caching strategy has it's own advantages and disadvantages. Is up to you making a good analysis of what you project needs.
+
+Even in the same project you may use different caching strategies for different models. For example: Is not the same caching millons of transaction logs everyday than registering a new user in your app.
+
 
 <br>
 
