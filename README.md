@@ -376,7 +376,7 @@ Implementing Caching Strategies
 
 **How it works?**
 
-1. The app first looks the desired model or query in the cache. If the data is found in cache, we’ve cache hit. The model or query results are read and returned to the client without database workload at all.
+1. The app first looks the desired model or query in the cache. If the data was found in cache, we’ve cache hit. The model or query results are read and returned to the client without database workload at all.
 2. If model or query results were not found in cache we have a cache miss, then data is retrieved from database.
 3. Model or query results retrived from database are stored in cache in order to have a successful cache hit next time.
 
@@ -425,7 +425,7 @@ $firstUser = app( UserRepository::class )->remember()->during( 3600 )->first( $q
 
 **How it works?**
 
-1. The app first looks the desired model or query in the cache. If the data is found in cache, we’ve cache hit. The model or query results are read and returned to the client without database workload at all.
+1. The app first looks the desired model or query in the cache. If the data was found in cache, we’ve cache hit. The model or query results are read and returned to the client without database workload at all.
 2. If model or query results were not found in cache we have a cache miss, then data is retrieved from database ONLY THIS TIME in order to be always available from cache.
 
 
