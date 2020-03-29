@@ -384,6 +384,13 @@ Implementing Caching Strategies
 
 Works best for heavy read workload scenarios and general purpose.
 
+**Pros**
+
+Provides balance between lowering database read workload and cache storage use.
+
+**Cons**
+
+In some cases, to keep cache up to date in real-time,  you may need to implement cache invalidation using the forget() method.
 
 **Usage**
 
@@ -425,6 +432,14 @@ $firstUser = app( UserRepository::class )->remember()->during( 3600 )->first( $q
 **Use cases**
 
 Works best for heavy read workload scenarios where the same model or query is requested constantly.
+
+**Pros**
+
+Keeps database read workload at minimum because always retrieves data from cache.
+
+**Cons**
+
+- If you want cache to be always up to date you must combine with Write-Through strategy, incrementing writes latency and workload in some cases.
 
 
 **Usage**
