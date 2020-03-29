@@ -9,7 +9,7 @@
             "email": "danielspadafora@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {"KrazyDanny\\Laravel\\Repository\\": "src/"}
     },
