@@ -611,7 +611,10 @@ class UserRepository extends Repository {
 	public function findByState ( string $state ) {
 
 		return $this->find(
-			User::where( $state, true )
+			User::where([
+				'state' => $state,
+				'deleted_at' => null,
+			])
 		);
 	}
 
