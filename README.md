@@ -702,9 +702,8 @@ class UserRepository extends Repository {
 	}
 
 	// then call this to invalidate active users cache and any other queries or models cache you need.
-	public function forgetOnUserSave ( 
-		User $user
-	) {
+	public function forgetOnUserSave ( User $user ) {
+
 		// let's use a queue to make only one request with all operations to the cache server
 		$queue = [];
 
