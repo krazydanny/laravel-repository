@@ -588,7 +588,7 @@ Extending Laravel Model Repository
 
 ### Pretty Queries
 
-You can create human readable queries that represent your business logic in an intuititve way and protect your query criteria encapsulating it's code.
+You can create human readable queries that represent your business logic in an intuititve way and ensures query criteria consistency encapsulating it's code.
 
 For example:
 
