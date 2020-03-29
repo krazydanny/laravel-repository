@@ -20,13 +20,12 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Making Eloquent Queries](#making-eloquent-queries)
 	- [Caching methods overview](#caching-methods-overview)	
 	- [Implementing Caching Strategies](#implementing-caching-strategies)
-		- [Read Aside](#read-aside)
-		- [Read Through](#read-through)
-		- [Write Back](#write-back)
-		- [Write Through](#write-through)
-		- [Read Aside](#read-aside)
-	- [Pretty Queries](#pretty-queries)
-	- [Bonus Features](#bonus-features)
+		- [Read Aside](#read-aside-cache)
+		- [Read Through](#read-through-cache)
+		- [Write Back](#write-back-cache)
+		- [Write Through](#write-through-cache)
+	- [Extending Laravel Model Repository](#extending-laravel-model-repository)
+		- [Pretty Queries](#pretty-queries)	
 	- [Bibliography](#bibliography)
 
 
@@ -582,12 +581,59 @@ app( UserRepository::class )->sync(
 
 ```
 
+<br>
+
+Extending Laravel Model Repository
+----------------------------------
+
+## Pretty Queries
+
+You can create human readable queries that represent your business logic in an intuititve way and protect your query criteria encapsulating it's code.
+
+For example:
+
+```php
+namespace App\Repositories;
+
+use App\User;
+use KrazyDanny\Eloquent\Repository;
+
+class UserRepository extends Repository {
+
+	public function __construct ( ) {
+
+		parent::__construct(
+			User::class, // Model's class name
+			'Users' // the name of the cache prefix
+		);
+	}
+
+	public function findByState ( string $state ) {
+
+		return $this->find(
+			User::where( $state, true )
+		);
+	}
+
+}
+
+```
+
+Then call a pretty query :)
+
+```php
+$activeUsers = app( UserRepository::class )->findByState( 'active' );
+
+```
+
+<br>
 
 Bibliography
-------------------------
+------------
 
 Here are some articles which talk in depth about caching strategies :)
 
 - https://bluzelle.com/blog/things-you-should-know-about-database-caching
 - https://zubialevich.blogspot.com/2018/08/caching-strategies.html
 - https://codeahoy.com/2017/08/11/caching-strategies-and-how-to-choose-the-right-one/
+- https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/BestPractices.html
