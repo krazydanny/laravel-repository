@@ -528,7 +528,7 @@ Models are stored only in cache until they are massively persisted in database.
 
 **Use cases**
 
-Used in heavy write load scenarios and when cache consistency must be granted.
+Used in heavy write load scenarios and database-cache consistency is not a priority.
 
 
 **Pros**
