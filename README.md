@@ -636,8 +636,8 @@ $activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'ac
 
 <br>
 
-Some things I wish somebody told me before :)
----------------------------------------------
+Some things I wish somebody told me before
+------------------------------------------
 
 ### "Be shapeless, like water my friend" (Bruce Lee) 
 
