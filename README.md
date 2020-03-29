@@ -24,10 +24,10 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Read-Through](#read-through-cache)
 		- [Write-Through](#write-through-cache)
 		- [Write-Back](#write-back-cache)		
-	- [Pretty Queries](#pretty-queries)			
+	- [Pretty Queries](#pretty-queries)
 	- [Cache Invalidation Techniques](#cache-invalidation-techniques)
-		-[Saving cache storage](#saving-cache-storage)
-		-[Keeping cache consistency](#keeping-cache-consistency)
+		- [Saving cache storage](#saving-cache-storage)
+		- [Keeping cache consistency](#keeping-cache-consistency)
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
 	- [Bibliography](#bibliography)
 
