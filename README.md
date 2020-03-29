@@ -90,7 +90,7 @@ Creating a Repository for a Model
 
 In order to simplify caching strategies we will encapsulate model access within a model repository.
 
-Two parameters are required by the constructor. The first parameter is the model's full class name. The second parameter is the prefix to be used in cache to store model data.
+Two parameters can be passed to the constructor. The first parameter (required) is the model's full class name. The second parameter (optional) is the prefix to be used in cache to store model data.
 
 
 ```php
@@ -104,7 +104,7 @@ class UserRepository extends Repository {
 	public function __construct ( ) {
 
 		parent::__construct(
-			User::class, // Model's class name
+			User::class, // Model's full class name
 			'Users' // OPTIONAL the name of the cache prefix. The short class name will be used by default. In this case would be 'User'
 		);
 	}
@@ -552,7 +552,7 @@ Used in heavy write load scenarios and database-cache consistency is not a prior
 
 **Pros**
 
-Resilient to database failures and downtimes 
+Very performant and resilient to database failures and downtimes 
 
 **Cons**
 
