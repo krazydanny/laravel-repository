@@ -17,14 +17,14 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Eloquent like methods](#eloquent-like-methods)
-		- [create()](#create())
-		- [get()](#get())
-		- [save()](#save())
-		- [delete()](#delete())
+		- [create()](#create)
+		- [get()](#get)
+		- [save()](#save)
+		- [delete()](#delete)
 	- [Making Eloquent Queries](#making-eloquent-queries)
-		- [find()](#find())
-		- [first()](#first())
-		- [count()](#count())
+		- [find()](#find)
+		- [first()](#first)
+		- [count()](#count)
 	- [Caching methods overview](#caching-methods-overview)	
 	- [Implementing Caching Strategies](#implementing-caching-strategies)
 		- [Read-Aside](#read-aside-cache)
@@ -175,7 +175,7 @@ Eloquent like methods
 
 Calling Eloquent-like methods directly from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
 
-**create()**
+**create ()**
 
 Create a new model:
 ```php
@@ -190,7 +190,7 @@ $user_id = $user->getKey();
 
 ```
 
-**get()**
+**get ()**
 
 Get a specific model by ID:
 ```php
@@ -198,7 +198,7 @@ $user = app( UserRepository::class )->get( $user_id );
 
 ```
 
-**save()**
+**save ()**
 
 Update a specific model:
 ```php
@@ -208,7 +208,7 @@ app( UserRepository::class )->save( $user );
 
 ```
 
-**delete()**
+**delete ()**
 
 Delete a specific model:
 ```php
