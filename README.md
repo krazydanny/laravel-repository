@@ -24,6 +24,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Read-Through](#read-through-cache)
 		- [Write-Through](#write-through-cache)
 		- [Write-Back](#write-back-cache)		
+	- [Cache Invalidation Techniques](#cache-invalidation-techniques)		
 	- [Extending Laravel Model Repository](#extending-laravel-model-repository)
 		- [Pretty Queries](#pretty-queries)	
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
@@ -653,6 +654,102 @@ $activeUsers = app( UserRepository::class )->remember()->during( 3600 )->findByS
 $activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'active' );
 
 ```
+
+<br>
+
+Cache invalidation techniques
+------------------------------------------
+
+### Saving cache storage
+
+To save storage we data to be removed from cache, so we'll use the forget() method, remember?
+
+
+**For specific models:**
+```php
+app( UserRepository::class )->forget( $user, $forgets );
+
+```
+**For queries:**
+
+```php
+$user->active = false;
+$user->save();
+
+$query = User::where( 'active', true );
+app( UserRepository::class )->forget( $query, $forgets );
+
+```
+
+**For events**
+
+Now let's say we want to invalidate some specific queries when you create or update a model. We could do something like this:
+
+```php
+namespace App\Repositories;
+
+use App\User;
+use KrazyDanny\Eloquent\Repository;
+
+class UserRepository extends Repository {
+
+	public function __construct ( ) {
+
+		parent::__construct(
+			User::class, // Model's class name
+			'Users' // the name of the cache prefix
+		);
+	}
+
+	// then call this to invalidate active users cache and any other queries or models cache you need.
+	public function forgetOnUserSave ( 
+		User $user
+	) {
+		// let's use a queue to make only one request with all operations to the cache server
+		$queue = [];
+
+		// invalidates that specific user model cache
+		$this->forget( $user );
+
+		// invalidates the active users query cache
+		$this->forget(
+			User::where([
+				'state'      => 'active',
+				'deleted_at' => null,
+			]),
+			$queue
+		);
+	}
+
+}
+
+```
+
+Then, in the user observer...
+
+```php
+namespace App\Observers;
+
+use App\User;
+use App\Repositories\UserRepository;
+
+class UserObserver {   
+
+    public function saved ( User $model ) {
+
+    	app( UserRepository::class )->forgetOnUserSave( $model );
+    }
+
+    # here other observer methods
+}
+
+```
+
+
+
+### Keeping cache consistency
+
+
 
 <br>
 
