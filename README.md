@@ -550,13 +550,13 @@ With the log() method Laravel Model Repository will store data in cache untill y
 
 First write models in cache (ONLY):
 ```php
-$model = app( LogsRepository::class )->log( new Logs( $data ) );
+$model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
 
 ```
 
 Then massively persist them in database:
 ```php
-app( LogsRepository::class )->sync( 
+app( SomeModelRepository::class )->sync( 
 
     // the first param is a callback which returns true if models were persisted successfully, false otherwise
     function( $collection ) {
@@ -652,14 +652,14 @@ Also this library is designed to be implemented on the go. This means you can pr
 Lets say you currently have the following line in many places of your proyect:
 
 ```php
-$logModel = Logs::create( $data );
+$model = SomeModel::create( $data );
 
 ```
 
 Now let's say you want to implement write-back strategy for your logs only in some critical places of your proyect and see how it goes. Then you should only replace only those lines with:
 
 ```php
-$model = app( LogsRepository::class )->log( new Logs( $data ) );
+$model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
 
 ```
 
