@@ -659,7 +659,9 @@ $logModel = Logs::create( $data );
 Now let's say you want to implement write-back strategy for your logs but in some critical places of your proyect and see how it goes. Then you should only replace ONLY those lines with:
 
 ```php
-$logModel = app( LogsRepository::class )->log();
+$logModel = new Logs( $data );
+
+app( LogsRepository::class )->log();
 
 ```
 
