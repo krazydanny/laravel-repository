@@ -22,8 +22,8 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Implementing Caching Strategies](#implementing-caching-strategies)
 		- [Read-Aside](#read-aside-cache)
 		- [Read-Through](#read-through-cache)
-		- [Write-Through](#write-through-cache)		
-		- [Write-Back](#write-back-cache)
+		- [Write-Through](#write-through-cache)
+		- [Write-Back](#write-back-cache)		
 	- [Extending Laravel Model Repository](#extending-laravel-model-repository)
 		- [Pretty Queries](#pretty-queries)	
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
@@ -312,7 +312,7 @@ app( UserRepository::class )->fromCache( $user );
 
 ### forget()
 
-This method removes one or many models (or queries) from cache. It's very useful when you update a model and need cached queries or dependencies to be refreshed in real time.
+This method removes one or many models (or queries) from cache. It's very useful when you have updated models in the database and need to invalidate cached model data or related query results.
 
 The first parameter must be an instance of the model, a specific model ID (primary key) or a query builder instance (Illuminate\Database\Eloquent\Builder).
 
