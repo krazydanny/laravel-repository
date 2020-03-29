@@ -636,8 +636,8 @@ $activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'ac
 
 <br>
 
-Some things I wish somebody told me before
-------------------------------------------
+Some things I wish somebody told me before :)
+---------------------------------------------
 
 ### "Be shapeless, like water my friend" (Bruce Lee) 
 
@@ -645,7 +645,7 @@ There's no unique, best or does-it-all-right caching technique.
 
 Every caching strategy has it's own advantages and disadvantages. Is up to you making a good analysis of what you project needs and it's priorities.
 
-Even in the same project you may use different caching strategies for different models. For example: Is not the same caching millons of transaction logs everyday than registering a new user in your app.
+Even in the same project you may use different caching strategies for different models. For example: Is not the same caching millons of transaction logs everyday than registering a few new users in your app.
 
 
 <br>
