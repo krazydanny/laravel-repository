@@ -18,12 +18,12 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Eloquent like methods](#eloquent-like-methods)
 	- [Making Eloquent Queries](#making-eloquent-queries)
-	- [Caching methods overview](#caching-methods-overview)	
+	- [Caching methods overview](#caching-methods-overview)
 	- [Implementing Caching Strategies](#implementing-caching-strategies)
 		- [Read-Aside](#read-aside-cache)
 		- [Read-Through](#read-through-cache)
 		- [Write-Through](#write-through-cache)
-		- [Write-Back](#write-back-cache)		
+		- [Write-Back](#write-back-cache)
 	- [Pretty Queries](#pretty-queries)
 	- [Cache Invalidation Techniques](#cache-invalidation-techniques)
 		- [Saving cache storage](#saving-cache-storage)
@@ -761,7 +761,7 @@ class UserObserver {
 
 ### For real-time scenarios
 
-To keep real-time cache consistency we want model data to be updated in the cache instead of removed.
+To keep real-time cache consistency we want model data to be updated in the cache instead of being removed.
 
 
 **For specific models:**
