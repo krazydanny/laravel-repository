@@ -550,13 +550,13 @@ With the log() method Laravel Model Repository will store data in cache untill y
 
 First write models in cache (ONLY):
 ```php
-app( UserRepository::class )->log( $model );
+$model = app( LogsRepository::class )->log( new Logs( $data ) );
 
 ```
 
 Then massively persist them in database:
 ```php
-app( UserRepository::class )->sync( 
+app( LogsRepository::class )->sync( 
 
     // the first param is a callback which returns true if models were persisted successfully, false otherwise
     function( $collection ) {
@@ -659,9 +659,7 @@ $logModel = Logs::create( $data );
 Now let's say you want to implement write-back strategy for your logs but in some critical places of your proyect and see how it goes. Then you should only replace ONLY those lines with:
 
 ```php
-$logModel = new Logs( $data );
-
-app( LogsRepository::class )->log();
+$model = app( LogsRepository::class )->log( new Logs( $data ) );
 
 ```
 
