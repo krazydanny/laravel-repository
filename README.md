@@ -17,15 +17,19 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Eloquent like methods](#eloquent-like-methods)
-		- [create()](#create)
-		- [get()](#get)
-		- [save()](#save)
-		- [delete()](#delete)
+		- [create](#create())
+		- [get](#get)
+		- [save](#save)
+		- [delete](#delete)
 	- [Making Eloquent Queries](#making-eloquent-queries)
-		- [find()](#find)
-		- [first()](#first)
-		- [count()](#count)
+		- [find](#find)
+		- [first](#first)
+		- [count](#count)
 	- [Caching methods overview](#caching-methods-overview)	
+		- [remember & during](#remember-&-during)
+		- [rememberForever](#rememberforever)
+		- [fromCache](#fromcache)	
+		- [forget](#forget)	
 	- [Implementing Caching Strategies](#implementing-caching-strategies)
 		- [Read-Aside](#read-aside-cache)
 		- [Read-Through](#read-through-cache)
@@ -175,7 +179,7 @@ Eloquent like methods
 
 Calling Eloquent-like methods directly from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
 
-**create ()**
+**create**
 
 Create a new model:
 ```php
@@ -190,7 +194,7 @@ $user_id = $user->getKey();
 
 ```
 
-**get ()**
+**get**
 
 Get a specific model by ID:
 ```php
@@ -198,7 +202,7 @@ $user = app( UserRepository::class )->get( $user_id );
 
 ```
 
-**save ()**
+**save**
 
 Update a specific model:
 ```php
@@ -208,7 +212,7 @@ app( UserRepository::class )->save( $user );
 
 ```
 
-**delete ()**
+**delete**
 
 Delete a specific model:
 ```php
@@ -226,7 +230,7 @@ Unlike get() or save(), query methods work a little different. They receive as p
 
 This will allow us to combine queries with caching strategies, as we will cover forward on this document. For now let's focus on the query methods only. For example:
 
-**find()**
+**find**
 
 To find all models under a certain criteria:
 ```php
@@ -236,7 +240,7 @@ $userCollection = app( UserRepository::class )->find( $q );
 
 ```
 
-**first()**
+**first**
 
 To get the first model instance under a certain criteria:
 ```php
@@ -246,7 +250,7 @@ $user = app( UserRepository::class )->first( $q );
 
 ```
 
-**count()**
+**count**
 
 To count all model instances under a certain criteria:
 ```php
@@ -262,7 +266,7 @@ $userCount = app( UserRepository::class )->count( $q );
 Caching methods overview
 ------------------------
 
-### remember() & during()
+### remember & during
 
 Calling remember() before any query method like find(), first() or count() stores the query result in cache for a given time. Always followed by the during() method, which defines the duration of the results in cache (TTL/Time-To-Live in seconds)
 
@@ -285,7 +289,7 @@ app( UserRepository::class )->remember( $user )->during( 3600 );
 
 
 
-### rememberForever()
+### rememberForever
 
 Calling rememberForever() before any query method like find(), first() or count() stores the query result in cache without an expiration time.
 
@@ -307,7 +311,7 @@ app( UserRepository::class )->rememberForever( $user );
 ```
 
 
-### fromCache()
+### fromCache
 
 Calling fromCache() before any query method like find(), first() or count() will try to retrieve the results from cache ONLY.
 
@@ -329,7 +333,7 @@ app( UserRepository::class )->fromCache( $user );
 ```
 
 
-### forget()
+### forget
 
 This method removes one or many models (or queries) from cache. It's very useful when you have updated models in the database and need to invalidate cached model data or related query results (for example: to have real-time updated cache).
 
