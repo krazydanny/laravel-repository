@@ -16,17 +16,25 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Install the package via Composer](#install-the-package-via-composer)
 	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
-	- [Calling built-in Eloquent methods](#calling-built-in-eloquent-methods)
+	- [Eloquent like methods](#eloquent-like-methods)
+		- [create()](#create)
+		- [get()](#get)
+		- [save()](#save)
+		- [delete()](#delete)
 	- [Making Eloquent Queries](#making-eloquent-queries)
+		- [find()](#find)
+		- [first()](#first)
+		- [count()](#count)
 	- [Caching methods overview](#caching-methods-overview)	
 	- [Implementing Caching Strategies](#implementing-caching-strategies)
 		- [Read-Aside](#read-aside-cache)
 		- [Read-Through](#read-through-cache)
 		- [Write-Through](#write-through-cache)
 		- [Write-Back](#write-back-cache)		
-	- [Cache Invalidation Techniques](#cache-invalidation-techniques)		
-	- [Extending Laravel Model Repository](#extending-laravel-model-repository)
-		- [Pretty Queries](#pretty-queries)	
+	- [Pretty Queries](#pretty-queries)			
+	- [Cache Invalidation Techniques](#cache-invalidation-techniques)
+		-[Saving cache storage](#saving-cache-storage)
+		-[Keeping cache consistency](#keeping-cache-consistency)
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
 	- [Bibliography](#bibliography)
 
@@ -162,11 +170,12 @@ $userRepository = app( UserRepository::class );
 
 <br>
 
-Calling built-in Eloquent methods
----------------------------------
+Eloquent like methods
+---------------------
 
-Calling native Eloquent Model methods from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
+Calling native-eloquent-like methods directly from our repository gives us the advantage of combining them with caching strategies. First, let's see how we call them. It's pretty straightforward :)
 
+**create()**
 
 Create a new model:
 ```php
@@ -181,6 +190,7 @@ $user_id = $user->getKey();
 
 ```
 
+**get()**
 
 Get a specific model by ID:
 ```php
@@ -188,6 +198,7 @@ $user = app( UserRepository::class )->get( $user_id );
 
 ```
 
+**save()**
 
 Update a specific model:
 ```php
@@ -197,6 +208,7 @@ app( UserRepository::class )->save( $user );
 
 ```
 
+**delete()**
 
 Delete a specific model:
 ```php
@@ -214,6 +226,8 @@ Unlike get() or save(), query methods work a little different. They receive as p
 
 This will allow us to combine queries with caching strategies, as we will cover forward on this document. For now let's focus on the query methods only. For example:
 
+**find()**
+
 To find all models under a certain criteria:
 ```php
 $q = User::where( 'active', true );
@@ -222,6 +236,8 @@ $userCollection = app( UserRepository::class )->find( $q );
 
 ```
 
+**first()**
+
 To get the first model instance under a certain criteria:
 ```php
 $q = User::where( 'active', true );
@@ -229,6 +245,8 @@ $q = User::where( 'active', true );
 $user = app( UserRepository::class )->first( $q );
 
 ```
+
+**count()**
 
 To count all model instances under a certain criteria:
 ```php
@@ -605,10 +623,8 @@ app( SomeModelRepository::class )->sync(
 
 <br>
 
-Extending Laravel Model Repository
+Pretty Queries
 ----------------------------------
-
-### Pretty Queries
 
 You can create human readable queries that represent your business logic in an intuititve way and ensures query criteria consistency encapsulating it's code.
 
@@ -660,9 +676,11 @@ $activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'ac
 Cache invalidation techniques
 ------------------------------------------
 
+In some cases  we will need to remove models or queries from cache even if we've set an expiration time for them.
+
 ### Saving cache storage
 
-To save storage we data to be removed from cache, so we'll use the forget() method, remember?
+To save storage we need data to be removed from cache, so we'll use the forget() method. Remember?
 
 
 **For specific models:**
@@ -681,7 +699,7 @@ app( UserRepository::class )->forget( $query, $forgets );
 
 ```
 
-**For events**
+**On events**
 
 Now let's say we want to invalidate some specific queries when you create or update a model. We could do something like this:
 
@@ -748,11 +766,49 @@ class UserObserver {
 
 ```
 
+### For real-time scenarios
+
+To keep real-time cache consistency we want model data to be updated in the cache instead of removed.
 
 
-### Keeping cache consistency
+**For specific models:**
 
+We will simply use remember(), during() and rememberForever() methods:
 
+```php
+app( UserRepository::class )->rememberForever( $user );
+// or
+app( UserRepository::class )->remember( $user )->during( 3600 );
+
+```
+
+**For queries:**
+
+We would keep using forget() method as always, otherwise it would be expensive anyway getting the query from the cache, updating it somehow and then overwriting cache again.
+
+**On events**
+
+Now let's say we want to update model A in cache when model B is updated.
+
+We could do something like this in the user observer:
+
+```php
+namespace App\Observers;
+
+use App\UserSettings;
+use App\Repositories\UserRepository;
+
+class UserSettingsObserver {   
+
+    public function saved ( UserSettings $model ) {
+
+    	app( UserRepository::class )->forget( $model->user_id );
+    }
+
+    # here other observer methods
+}
+
+```
 
 <br>
 
@@ -786,7 +842,6 @@ $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
 And leave those calls we want out of the caching strategy alone, they are not affected at all. Also some things doesn't really need to be cached. 
 
 Be like water my friend... ;)
-
 
 <br>
 
