@@ -544,7 +544,7 @@ In some cache failure scenarios data may be permanently lost.
 
 *IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY (at the moment)*
 
-When detecting you want a model to be remembered in cache, Laravel Model Repository will automatically store it in cache and database (inserting or updating depending on the case).
+With the log() method Laravel Model Repository will store data in cache untill you call the sync() method which will iterate many (batch) of cached models at once, alowing us to persist them the way our project needs through a callback function.
 
 
 First write models in cache (ONLY):
@@ -561,8 +561,8 @@ app( UserRepository::class )->sync(
     function( $collection ) {
         
         foreach ( $collection as $model ) {
-            // do database library specific logic here
-
+            // do database library custom and optimized logic here
+            // for example: you could use bulk inserts and transactions in order to improve both performance and consistency
         }        
 
         if ( $result )
