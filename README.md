@@ -368,6 +368,8 @@ app( UserRepository::class )->forget( $forgets );
 Implementing Caching Strategies
 -------------------------------
 
+<br>
+
 ### Read-Aside Cache
 
 <p align="center">
@@ -415,7 +417,7 @@ $userCount = app( UserRepository::class )->remember()->during( 3600 )->count( $q
 $firstUser = app( UserRepository::class )->remember()->during( 3600 )->first( $q );
 
 ```
-
+<br>
 
 ### Read-Through Cache
 
@@ -465,7 +467,7 @@ $userCount = app( UserRepository::class )->rememberForever()->count( $q );
 $firstUser = app( UserRepository::class )->rememberForever()->first( $q );
 
 ```
-
+<br>
 
 ### Write-Through Cache
 
@@ -530,6 +532,7 @@ $user->active = false;
 app( UserRepository::class )->remember()->during( 3600 )->save( $user );
 
 ```
+<br>
 
 ### Write-Back Cache
 
