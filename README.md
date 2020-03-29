@@ -439,7 +439,7 @@ Keeps database read workload at minimum because always retrieves data from cache
 
 **Cons**
 
-- If you want cache to be always up to date you must combine with Write-Through strategy, incrementing writes latency and workload in some cases.
+If you want cache to be always up to date you must combine with Write-Through strategy, incrementing writes latency and workload in some cases.
 
 
 **Usage**
