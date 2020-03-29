@@ -638,7 +638,7 @@ $activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'ac
 Bibliography
 ------------
 
-Here are some articles which talk in depth about caching strategies :)
+Here are some articles which talk in depth about caching strategies:
 
 - https://bluzelle.com/blog/things-you-should-know-about-database-caching
 - https://zubialevich.blogspot.com/2018/08/caching-strategies.html
