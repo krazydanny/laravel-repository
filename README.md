@@ -7,7 +7,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 
 
 - [Laravel Model Repository](#laravel-model-repository)
-	- [Main Features](#main-features)
+	- [Main Advantages](#main-advantages)
 		- [Simplify caching strategies and buy time](#simplify-caching-strategies-and-buy-time)	
 		- [Save cache storage and money](#save-cache-storage-and-money)
 	- [Installation](#installation)
@@ -32,8 +32,8 @@ This package provides an abstraction layer for easily implementing industry-stan
 
 <br>
 
-Main Features
--------------
+Main Advantages
+---------------
 
 
 ### Simplify caching strategies and buy time
