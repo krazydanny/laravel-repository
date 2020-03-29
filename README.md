@@ -643,7 +643,7 @@ Some things I wish somebody told me before :)
 
 There's no unique, best or does-it-all-right caching technique.
 
-Every caching strategy has it's own advantages and disadvantages. Is up to you making a good analysis of what you project needs.
+Every caching strategy has it's own advantages and disadvantages. Is up to you making a good analysis of what you project needs and priorities.
 
 Even in the same project you may use different caching strategies for different models. For example: Is not the same caching millons of transaction logs everyday than registering a new user in your app.
 
