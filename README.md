@@ -569,6 +569,8 @@ $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
 
 ```
 
+The sync() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
+
 Then massively persist them in database:
 ```php
 app( SomeModelRepository::class )->sync( 
