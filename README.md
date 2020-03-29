@@ -627,6 +627,10 @@ Then call a pretty query :)
 ```php
 $activeUsers = app( UserRepository::class )->findByState( 'active' );
 
+$activeUsers = app( UserRepository::class )->remember()->during(3600)->findByState( 'active' );
+
+$activeUsers = app( UserRepository::class )->rememberForever()->findByState( 'active' );
+
 ```
 
 <br>
