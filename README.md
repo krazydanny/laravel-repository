@@ -17,7 +17,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Creating a Repository for a Model](#creating-a-repository-for-a-model)
 	- [Use with Singleton Pattern](#use-with-singleton-pattern)
 	- [Eloquent like methods](#eloquent-like-methods)
-		- [create](#create())
+		- [create](#create)
 		- [get](#get)
 		- [save](#save)
 		- [delete](#delete)
@@ -26,7 +26,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [first](#first)
 		- [count](#count)
 	- [Caching methods overview](#caching-methods-overview)	
-		- [remember & during](#remember-&-during)
+		- [remember / during](#remember-/-during)
 		- [rememberForever](#rememberforever)
 		- [fromCache](#fromcache)	
 		- [forget](#forget)	
@@ -266,7 +266,7 @@ $userCount = app( UserRepository::class )->count( $q );
 Caching methods overview
 ------------------------
 
-### remember & during
+### remember / during
 
 Calling remember() before any query method like find(), first() or count() stores the query result in cache for a given time. Always followed by the during() method, which defines the duration of the results in cache (TTL/Time-To-Live in seconds)
 
