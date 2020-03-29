@@ -680,7 +680,9 @@ $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
 
 ```
 
-And leave those calls we want out of the caching strategy alone, they are not affected at all :)
+And leave those calls we want out of the caching strategy alone, they are not affected at all. Also some things doesn't need to be cached at all. 
+
+Be like water my friend... ;)
 
 
 <br>
