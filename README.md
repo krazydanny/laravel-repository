@@ -647,6 +647,24 @@ Every caching strategy has it's own advantages and disadvantages. Is up to you m
 
 Even in the same project you may use different caching strategies for different models. For example: Is not the same caching millons of transaction logs everyday than registering a few new users in your app.
 
+Also this library is designed to be implemented on the go. This means you can progressively apply caching techniques.
+
+Lets say you currently have the following line in many places of your proyect:
+
+```php
+$logModel = Logs::create( $data );
+
+```
+
+Now let's say you want to implement write-back strategy for your logs but in some critical places of your proyect and see how it goes. Then you should only replace ONLY those lines with:
+
+```php
+$logModel = app( LogsRepository::class )->log();
+
+```
+
+And the calls you want to leave out of the caching strategy are not affected at all :)
+
 
 <br>
 
