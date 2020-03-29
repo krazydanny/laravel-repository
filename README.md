@@ -312,7 +312,7 @@ app( UserRepository::class )->fromCache( $user );
 
 ### forget()
 
-This method removes one or many models (or queries) from cache. It's very useful when you have updated models in the database and need to invalidate cached model data or related query results.
+This method removes one or many models (or queries) from cache. It's very useful when you have updated models in the database and need to invalidate cached model data or related query results (for example: to have real-time updated cache).
 
 The first parameter must be an instance of the model, a specific model ID (primary key) or a query builder instance (Illuminate\Database\Eloquent\Builder).
 
