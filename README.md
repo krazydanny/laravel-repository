@@ -28,6 +28,9 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Cache Invalidation Techniques](#cache-invalidation-techniques)
 		- [Saving cache storage](#saving-cache-storage)
 		- [Keeping cache consistency](#keeping-cache-consistency)
+	- [Exception handling](#exception-handling)
+		- [Database Exceptions](#database-exceptions)
+		- [Cache Store Exceptions](#cache-store-exceptions)
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
 	- [Bibliography](#bibliography)
 
@@ -802,6 +805,12 @@ class UserSettingsObserver {
 }
 
 ```
+<br>
+
+Exceptions handling
+-------------------
+
+COMING SOON!
 
 <br>
 
