@@ -23,10 +23,11 @@ This package provides an abstraction layer for easily implementing industry-stan
 		- [Read Aside](#read-aside)
 		- [Read Through](#read-through)
 		- [Write Back](#write-back)
-		- [Write Arround](#write-arround)
 		- [Write Through](#write-through)
+		- [Read Aside](#read-aside)
 	- [Pretty Queries](#pretty-queries)
 	- [Bonus Features](#bonus-features)
+	- [Bibliography](#bibliography)
 
 
 <br>
@@ -580,3 +581,13 @@ app( UserRepository::class )->sync(
 );
 
 ```
+
+
+Bibliography
+------------------------
+
+Here are some articles which talk in depth about caching strategies :)
+
+- https://bluzelle.com/blog/things-you-should-know-about-database-caching
+- https://zubialevich.blogspot.com/2018/08/caching-strategies.html
+- https://codeahoy.com/2017/08/11/caching-strategies-and-how-to-choose-the-right-one/
