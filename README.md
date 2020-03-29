@@ -649,14 +649,14 @@ Even in the same project you may use different caching strategies for different 
 
 Also this library is designed to be implemented on the go. This means you can progressively apply caching techniques.
 
-Lets say you currently have the following line in many places of your proyect:
+Lets say we currently have the following line in many places of our proyect:
 
 ```php
 $model = SomeModel::create( $data );
 
 ```
 
-Now let's say you want to implement write-back strategy for your logs only in some critical places of your proyect and see how it goes. Then you should only replace only those lines with:
+Now assume we want to implement write-back strategy for that model only in some critical places of your proyect and see how it goes. Then you should only replace those specifice calls with:
 
 ```php
 $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
