@@ -656,7 +656,7 @@ $model = SomeModel::create( $data );
 
 ```
 
-Now assume we want to implement write-back strategy for that model only in some critical places of your proyect and see how it goes. Then you should only replace those specifice calls with:
+Now assume we want to implement write-back strategy for that model only in some critical places of our proyect and see how it goes. Then we should only replace those specifice calls with:
 
 ```php
 $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
