@@ -705,10 +705,10 @@ class UserRepository extends Repository {
 	public function forgetOnUserSave ( User $user ) {
 
 		// let's use a queue to make only one request with all operations to the cache server
-		$queue = [];
+		$invalidations = [];
 
 		// invalidates that specific user model cache
-		$this->forget( $user );
+		$this->forget( $user, $invalidations );
 
 		// invalidates the active users query cache
 		$this->forget(
@@ -716,8 +716,12 @@ class UserRepository extends Repository {
 				'state'      => 'active',
 				'deleted_at' => null,
 			]),
-			$queue
+			$invalidations
 		);
+
+		// makes request to the server and invalidates all cache entries at once
+
+		$this->forget( $invalidations );
 	}
 
 }
