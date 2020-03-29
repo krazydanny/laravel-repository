@@ -105,7 +105,7 @@ class UserRepository extends Repository {
 
 		parent::__construct(
 			User::class, // Model's class name
-			'Users' // the name of the cache prefix
+			'Users' // OPTIONAL the name of the cache prefix. The short class name will be used by default. In this case would be 'User'
 		);
 	}
 }
