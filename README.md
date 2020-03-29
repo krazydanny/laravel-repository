@@ -58,34 +58,35 @@ Laravel Model Repository stores only the business specific data of your model in
 
 Installation
 ------------
-Make sure you have properly configured a cache connection and driver in your Laravel/Lumen project. You can find cache configuration instructions for Laravel at https://laravel.com/docs/6.x/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
+Make sure you have properly configured a cache connection and driver in your Laravel/Lumen project. You can find cache configuration instructions for Laravel at https://laravel.com/docs/7.x/cache and for Lumen at https://lumen.laravel.com/docs/6.x/cache
 
 
 ### Laravel version Compatibility
 
  Laravel  | Package
 :---------|:----------
- 5.6.x    | 0.9.x
- 5.7.x    | 0.9.x
- 5.8.x    | 0.9.x
- 6.x      | 0.9.x
+ 5.6.x    | 0.9-beta
+ 5.7.x    | 0.9-beta
+ 5.8.x    | 0.9-beta
+ 6.x      | 0.9-beta
+ 7.x      | 0.9-beta
 
 
 ### Lumen version Compatibility
 
  Lumen    | Package
 :---------|:----------
- 5.6.x    | 0.9.x
- 5.7.x    | 0.9.x
- 5.8.x    | 0.9.x
- 6.x      | 0.9.x
+ 5.6.x    | 0.9-beta
+ 5.7.x    | 0.9-beta
+ 5.8.x    | 0.9-beta
+ 6.x      | 0.9-beta
 
 
 
 ### Install the package via Composer
 
 ```bash
-$ composer require krazydanny/laravel-repository
+$ composer require krazydanny/laravel-repository:v0.9-beta
 ```
 
 <br>
@@ -102,9 +103,9 @@ Two parameters can be passed to the constructor. The first parameter (required) 
 namespace App\Repositories;
 
 use App\User;
-use KrazyDanny\Eloquent\Repository;
+use KrazyDanny\Laravel\Repository\BaseRepository;
 
-class UserRepository extends Repository {
+class UserRepository extends BaseRepository {
 
 	public function __construct ( ) {
 
@@ -630,9 +631,9 @@ For example:
 namespace App\Repositories;
 
 use App\User;
-use KrazyDanny\Eloquent\Repository;
+use KrazyDanny\Laravel\Repository\BaseRepository;
 
-class UserRepository extends Repository {
+class UserRepository extends BaseRepository {
 
 	public function __construct ( ) {
 
@@ -703,9 +704,9 @@ Now let's say we want to invalidate some specific queries when you create or upd
 namespace App\Repositories;
 
 use App\User;
-use KrazyDanny\Eloquent\Repository;
+use KrazyDanny\Laravel\Repository\BaseRepository;
 
-class UserRepository extends Repository {
+class UserRepository extends BaseRepository {
 
 	public function __construct ( ) {
 
