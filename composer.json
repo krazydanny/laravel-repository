@@ -1,0 +1,17 @@
+{
+    "name": "krazydanny/laravel-repository",
+    "description": "Laravel Repository",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Spadafora",
+            "email": "danielspadafora@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {"KrazyDanny\\Laravel\\Repository\\": "src/"}
+    },
+    "require": {}
+}
