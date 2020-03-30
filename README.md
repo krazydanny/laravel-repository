@@ -628,11 +628,11 @@ app( SomeModelRepository::class )->sync(
 
 It has two possible values.
 
-**log** (default)
+- **log** (default)
 
 Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance when you don't need to access them until they are persisted in database.
 
-**index**
+- **index**
 
 Stores models in a way that they are available to be loaded by get() method too. Useful when models need to be accesible before they are persisted.
 
