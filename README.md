@@ -589,7 +589,7 @@ With the log() method Laravel Model Repository will store data in cache untill y
 
 First write models in cache (ONLY):
 ```php
-$model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
+$model = app( TransactionsRepository::class )->log( new Transactions( $data ) );
 
 ```
 
@@ -597,7 +597,7 @@ The sync() method could be called later in a separate job or scheduled task, all
 
 Then massively persist them in database:
 ```php
-app( SomeModelRepository::class )->sync( 
+app( TransactionsRepository::class )->sync( 
 
     // the first param is a callback which returns true if models were persisted successfully, false otherwise
     function( $collection ) {
