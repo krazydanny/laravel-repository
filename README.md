@@ -265,6 +265,8 @@ Caching methods overview
 
 Calling remember() before any query method like find(), first() or count() stores the query result in cache for a given time. Always followed by the during() method, which defines the duration of the results in cache (TTL/Time-To-Live in seconds)
 
+**VERY IMPORTANT:** For Laravel/Lumen v5.7 and earlier versions TTL param passed to during() are minutes instead of seconds. This library follows Laravel standards so check what unit of time your version uses for the Cache facade.
+
 
 ```php
 $q = User::where( 'active', true );
