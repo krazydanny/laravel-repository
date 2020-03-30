@@ -1,4 +1,4 @@
-Laravel Model Repository (COMING SOON!)
+Laravel Model Repository
 ========================
 
 [![Latest Stable Version](https://img.shields.io/github/v/release/krazydanny/laravel-repository?include_prereleases)](https://packagist.org/packages/krazydanny/laravel-repository) [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora) [![License](https://img.shields.io/github/license/krazydanny/laravel-repository)](https://github.com/krazydanny/laravel-repository/blob/master/LICENSE)
@@ -264,6 +264,8 @@ Caching methods overview
 ### remember() & during()
 
 Calling remember() before any query method like find(), first() or count() stores the query result in cache for a given time. Always followed by the during() method, which defines the duration of the results in cache (TTL/Time-To-Live in seconds)
+
+**VERY IMPORTANT:** For Laravel/Lumen v5.7 and earlier versions TTL param passed to during() are minutes instead of seconds. This library follows Laravel standards so check what unit of time your version uses for the Cache facade.
 
 
 ```php
