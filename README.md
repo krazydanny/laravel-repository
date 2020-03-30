@@ -817,7 +817,7 @@ class UserSettingsObserver {
 Repository Events
 -----------------
 
-An observers can also be attached to the repository...
+An observer can also be attached to the repository...
 
 ```php
 app( UserRepository::class )->observe( new YourUserRepositoryObserver );
