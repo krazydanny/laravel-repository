@@ -846,7 +846,7 @@ $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
 
 ```
 
-And leave those calls we want out of the caching strategy alone, they are not affected at all. Also some things doesn't really need to be cached. 
+And leave those calls we want out of the caching strategy alone, they are not affected at all. Besides some things doesn't really need to be cached. 
 
 Be like water my friend... ;)
 
