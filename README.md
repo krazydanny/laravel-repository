@@ -618,7 +618,7 @@ app( SomeModelRepository::class )->sync(
         'written_until' => \time(), // process only models written until the given timestamp in seconds
         'object_limit'  => 500, // the object limit to be processed at the same time (to prevent memory overflows)
         'clean_cache'   => true, // if callback returns true, marks models as persisted
-        'mode'			=> 'log' // log | index
+        'mode'          => 'log' // log | index
     ] 
 );
 
