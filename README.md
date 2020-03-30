@@ -1,4 +1,4 @@
-Laravel Model Repository (COMING SOON!)
+Laravel Model Repository
 ========================
 
 [![Latest Stable Version](https://img.shields.io/github/v/release/krazydanny/laravel-repository?include_prereleases)](https://packagist.org/packages/krazydanny/laravel-repository) [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora) [![License](https://img.shields.io/github/license/krazydanny/laravel-repository)](https://github.com/krazydanny/laravel-repository/blob/master/LICENSE)
