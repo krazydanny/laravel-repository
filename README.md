@@ -594,7 +594,6 @@ Using **log()**
 Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance when you don't need to access them until they are persisted in database.
 
 ```php
-
 $model = app( TransactionsRepository::class )->log( new Transactions( $data ) );
 
 ```
@@ -603,10 +602,14 @@ Using **index()**
 
 Stores models in a way that they are available to be loaded by get() method too. Useful when models need to be accesible before they are persisted.
 
+```php
+$model = app( TransactionsRepository::class )->index( new Transactions( $data ) );
 
-Then massively persist them in database:
+```
 
-Using **sync** 
+Then massively persist models in database:
+
+Using **sync()** 
 
 The sync() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
 
