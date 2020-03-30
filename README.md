@@ -824,23 +824,44 @@ app( UserRepository::class )->observe( new YourUserRepositoryObserver );
 
 ```
 
-...in order to listen the following events:
+...in order to listen some useful repository-level events.
+
+**Some use cases...**
+
+- Track the usage of our caching strategy in production environments and check if we've choose well :)
+- 
 
 
 ### cacheHit
 
-Observing this event we can take action when a model or query result was found in cache.
+Observing this event we can take action when model or query result are found in cache.
+
 
 ```php
 namespace App\Observers;
+
+use App\User;
+use Illuminate\Database\Eloquent\Collection;
 
 use App\Repositories\UserRepository;
 
 class UserRepositoryObserver {   
 
-    public function cacheHit ( $model_or_query_result ) {
+	# triggered when model or query results are found in cache
+    public function cacheHit ( $mixed ) {
 
-    	// some code
+    	// for example:
+
+    	if ( $mixed instanceof User ) {
+    		
+    		// we can do something when a specific model was found in cache
+    	}
+    	else if ( $mixed instanceof Collection ) {
+    		// we can do something when retrieving find() query results
+    	}
+    	else if ( \is_int($mixed) ) {
+    		// we can do something when retrieving count() query results
+    	}
     }
 
     // here other observer methods
@@ -850,18 +871,23 @@ class UserRepositoryObserver {
 
 ### cacheMiss
 
-Also we can do something when a model or query result was not found in cache.
+Also we can do something when model or query result are NOT found in cache.
+
 
 ```php
 namespace App\Observers;
+
+use App\User;
+use Illuminate\Database\Eloquent\Collection;
 
 use App\Repositories\UserRepository;
 
 class UserRepositoryObserver {   
 
-    public function cacheMiss ( $model_or_query_result ) {
+	# triggered when model or query results were NOT found in cache
+    public function cacheMiss ( $mixed ) {
 
-    	// some code
+    	// we can do something here
     }
 
     // here other observer methods
@@ -874,7 +900,23 @@ class UserRepositoryObserver {
 Exceptions handling
 -------------------
 
-COMING SOON!
+### Cache Exceptions
+
+```php
+app( UserRepository::class )->handleCacheExceptions(function( $e ){
+	// here we can do something like log the exception silently
+})
+
+```
+
+### Database Exceptions
+
+```php
+app( UserRepository::class )->handleDatabaseExceptions(function( $e ){
+	// here we can do something like log the exception silently
+})
+
+```
 
 <br>
 
