@@ -618,10 +618,24 @@ app( SomeModelRepository::class )->sync(
         'written_until' => \time(), // process only models written until the given timestamp in seconds
         'object_limit'  => 500, // the object limit to be processed at the same time (to prevent memory overflows)
         'clean_cache'   => true, // if callback returns true, marks models as persisted
+        'mode'			=> 'log' // log | index
     ] 
 );
 
 ```
+
+### The "mode" parameter:
+
+It has two possible values.
+
+**log** (default)
+
+Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance when you don't need to access them until they are persisted in database.
+
+**index**
+
+Stores models in a way that they are available to be loaded by get() method too. Useful when models need to be accesible before they are persisted.
+
 
 <br>
 
@@ -817,24 +831,22 @@ class UserSettingsObserver {
 Repository Events
 -----------------
 
-An observer can also be attached to the repository...
+An observer can also be attached to the repository in order to listen some useful repository-level events.
 
 ```php
 app( UserRepository::class )->observe( new YourUserRepositoryObserver );
 
 ```
 
-...in order to listen some useful repository-level events.
-
 **Some use cases...**
 
-- Track the usage of our caching strategy in production environments and check if we've choose well :)
+- Monitor the usage of our caching strategy in production environments and check if it was our best choice :)
 - 
 
 
 ### cacheHit
 
-Observing this event we can take action when model or query result are found in cache.
+Observing this event allows us to take action when model or query result are found in cache.
 
 
 ```php
@@ -853,13 +865,15 @@ class UserRepositoryObserver {
     	// for example:
 
     	if ( $mixed instanceof User ) {
-    		
+
     		// we can do something when a specific model was found in cache
     	}
     	else if ( $mixed instanceof Collection ) {
+
     		// we can do something when retrieving find() query results
     	}
     	else if ( \is_int($mixed) ) {
+
     		// we can do something when retrieving count() query results
     	}
     }
@@ -871,7 +885,7 @@ class UserRepositoryObserver {
 
 ### cacheMiss
 
-Also we can do something when model or query result are NOT found in cache.
+Also we can do something when model or query results are NOT found in cache.
 
 
 ```php
