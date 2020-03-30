@@ -591,7 +591,7 @@ First write models in cache:
 
 Using **log()**
 
-Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance when you don't need to access them until they are persisted in database.
+Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance and storage when you don't need to access them until they are persisted in database.
 
 ```php
 $model = app( TransactionsRepository::class )->log( new Transactions( $data ) );
