@@ -181,7 +181,7 @@ class BaseRepository implements RepositoryInterface {
                 if ( $model ) {
 
                     $this->fireObserverEvent(
-                        'retrievedFromCache',
+                        'cacheHit',
                         $model
                     );
                 }
@@ -203,9 +203,9 @@ class BaseRepository implements RepositoryInterface {
                     $this->storeModelInCache( $model );
 
                     $this->fireObserverEvent(
-                        'retrievedFromDatabase',
+                        'databaseHit',
                         $model
-                    );                    
+                    );
                 }
 
                 $this->clearSettings();
@@ -300,19 +300,24 @@ class BaseRepository implements RepositoryInterface {
     ) : ?Model 
     {
 
-        $ttl = $this->ttl;
+        $dbHit = false;
+        $ttl   = $this->ttl;
 
         $data = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder, $ttl ) {
+            function () use ( $queryBuilder, $ttl, $dbHit ) {
 
                 $model = $queryBuilder->first();
 
                 if ( $model ) {
 
-                    if ( $ttl == 0 )
+                    $dbHit = true;
+
+                    if ( $ttl == 0 ) {
+
                         return $model;
-                    
+                    }   
+
                     return $model->toArray();    
                 }
 
@@ -333,7 +338,14 @@ class BaseRepository implements RepositoryInterface {
 
             $class::reguard();
 
-            return $models[0] ?? null;
+            $model = $models[0] ?? false;
+
+            if ( !$model )
+                return null;
+
+            $this->detectObserverEvent( $dbHit, $model );
+
+            return $model;
         }
 
         return $data;
@@ -507,25 +519,38 @@ class BaseRepository implements RepositoryInterface {
         Builder $queryBuilder 
     ) : Collection 
     {
-        $ttl  = $this->ttl;
+        $dbHit = false;
+        $ttl   = $this->ttl;
 
         $data = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder, $ttl ) {
+            function () use ( $queryBuilder, $ttl, $dbHit ) {
 
                 if ( $ttl == 0 ) {
-                    return $queryBuilder->get();
+
+                    $r = $queryBuilder->get();
+                } 
+                else {
+
+                    $r = $queryBuilder->get()->toArray();
                 }
 
-                return $queryBuilder->get()->toArray();
+                if ( $r )
+                    $dbHit = true;
+
+                return $r;
             },
             $this->generateQueryCacheKey(
                 $queryBuilder
             )            
         );
 
-        if ( $data instanceof Collection )
+        $this->detectObserverEvent( $dbHit, $data );
+
+        if ( $data instanceof Collection ) {
+
             return $data;
+        }
 
         if ( !$data )
             $data = [];
@@ -541,14 +566,33 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
+    protected function detectObserverEvent ( 
+        bool $dbHit,
+        $mixed
+    ) {
+
+        if ( $dbHit ) {
+
+            $this->fireObserverEvent( 'cacheMiss', $mixed );
+        }
+        else if ( $mixed ) {
+
+            $this->fireObserverEvent( 'cacheHit', $mixed );
+        }
+    }
+
+
     public function count ( 
         Builder $queryBuilder 
     ) : int 
     {
+        $dbHit = false;
 
-        return $this->query(
+        $c = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder ) {
+            function () use ( $queryBuilder, $dbHit ) {
+
+                $dbHit = true;
 
                 return $queryBuilder->get()->count();
             },
@@ -556,6 +600,10 @@ class BaseRepository implements RepositoryInterface {
                 $queryBuilder
             ).':count'
         );
+
+        $this->detectObserverEvent( $dbHit, $c );
+
+        return $c;
     }
 
 

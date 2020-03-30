@@ -33,6 +33,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Exception handling](#exception-handling)
 		- [Database Exceptions](#database-exceptions)
 		- [Cache Store Exceptions](#cache-store-exceptions)
+	- [Repository Events](#repository-events)
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
 	- [Bibliography](#bibliography)
 
@@ -810,6 +811,64 @@ class UserSettingsObserver {
 }
 
 ```
+
+<br>
+
+Repository Events
+-----------------
+
+Observers can also be asigned to the repository...
+
+```php
+app( UserRepository::class )->observe( new YourUserRepositoryObserver );
+
+```
+
+...in order to listen the following events:
+
+
+### retrievedFromCache
+
+Observing this event we can take action when a model or query result was found in cache.
+
+```php
+namespace App\Observers;
+
+use App\Repositories\UserRepository;
+
+class UserRepositoryObserver {   
+
+    public function cacheHit ( $model_or_query_result ) {
+
+    	// some code
+    }
+
+    // here other observer methods
+}
+
+```
+
+### retrievedFromDatabase
+
+Also we can do something when a model or query result was not found in cache.
+
+```php
+namespace App\Observers;
+
+use App\Repositories\UserRepository;
+
+class UserRepositoryObserver {   
+
+    public function cacheMiss ( $model_or_query_result ) {
+
+    	// some code
+    }
+
+    // here other observer methods
+}
+
+```
+
 <br>
 
 Exceptions handling
