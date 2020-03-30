@@ -584,18 +584,33 @@ In some cache failure scenarios data may be permanently lost.
 
 *IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY (at the moment)*
 
-With the log() method Laravel Model Repository will store data in cache untill you call the sync() method which will iterate many (batch) of cached models at once, alowing us to persist them the way our project needs through a callback function.
+With the log() or index() method Laravel Model Repository will store data in cache untill you call the sync() method which will iterate many (batch) of cached models at once, allowing us to persist them the way our project needs through a callback function.
 
 
-First write models in cache (ONLY):
+First write models in cache:
+
+Using **log()**
+
+Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance when you don't need to access them until they are persisted in database.
+
 ```php
+
 $model = app( TransactionsRepository::class )->log( new Transactions( $data ) );
 
 ```
 
-The sync() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
+Using **index()**
+
+Stores models in a way that they are available to be loaded by get() method too. Useful when models need to be accesible before they are persisted.
+
 
 Then massively persist them in database:
+
+Using **sync** 
+
+The sync() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
+
+
 ```php
 app( TransactionsRepository::class )->sync( 
 
@@ -603,7 +618,9 @@ app( TransactionsRepository::class )->sync(
     function( $collection ) {
         
         foreach ( $collection as $model ) {
+
             // do database library custom and optimized logic here
+
             // for example: you could use bulk inserts and transactions in order to improve both performance and consistency
         }        
 
@@ -612,29 +629,32 @@ app( TransactionsRepository::class )->sync(
         
         return false; // if false keeps model ids in sync queue and tries again next time sync method is called
     },
+
     // the second param (optional) is an array with one or many of the following available options
     [
         'written_since' => 0, // process only models written since ths specified timestamp in seconds
         'written_until' => \time(), // process only models written until the given timestamp in seconds
         'object_limit'  => 500, // the object limit to be processed at the same time (to prevent memory overflows)
         'clean_cache'   => true, // if callback returns true, marks models as persisted
-        'mode'          => 'log' // log | index
+        'method'        => 'log' // log | index
     ] 
 );
 
 ```
 
-#### The "mode" parameter:
+The **method** parameter:
 
 It has two possible values.
 
 - **log** (default)
 
-Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance when you don't need to access them until they are persisted in database.
+Performs sync only for those models stored in cache with the log() method;
 
 - **index**
 
-Stores models in a way that they are available to be loaded by get() method too. Useful when models need to be accesible before they are persisted.
+Performs sync only for those models stored in cache with the index() method;
+
+
 
 
 <br>
@@ -701,7 +721,7 @@ To save storage we need data to be removed from cache, so we'll use the forget()
 
 **For specific models:**
 ```php
-app( UserRepository::class )->forget( $user, $forgets );
+app( UserRepository::class )->forget( $user );
 
 ```
 **For queries:**
@@ -711,7 +731,7 @@ $user->active = false;
 $user->save();
 
 $query = User::where( 'active', true );
-app( UserRepository::class )->forget( $query, $forgets );
+app( UserRepository::class )->forget( $query );
 
 ```
 
