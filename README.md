@@ -827,7 +827,7 @@ app( UserRepository::class )->observe( new YourUserRepositoryObserver );
 ...in order to listen the following events:
 
 
-### retrievedFromCache
+### cacheHit
 
 Observing this event we can take action when a model or query result was found in cache.
 
@@ -848,7 +848,7 @@ class UserRepositoryObserver {
 
 ```
 
-### retrievedFromDatabase
+### cacheMiss
 
 Also we can do something when a model or query result was not found in cache.
 
