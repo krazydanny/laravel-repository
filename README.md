@@ -624,7 +624,7 @@ app( SomeModelRepository::class )->sync(
 
 ```
 
-### The "mode" parameter:
+#### The "mode" parameter:
 
 It has two possible values.
 
