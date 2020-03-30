@@ -1,7 +1,9 @@
 Laravel Model Repository (COMING SOON!)
 ========================
 
-[![Latest Stable Version](https://img.shields.io/github/v/release/krazydanny/laravel-repository)](https://packagist.org/packages/krazydanny/laravel-repository) [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)
+[![Latest Stable Version](https://img.shields.io/github/v/release/krazydanny/laravel-repository?include_prereleases)](https://packagist.org/packages/krazydanny/laravel-repository) [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/danielspadafora)[![License](https://img.shields.io/github/license/krazydanny/laravel-repository)](https://github.com/krazydanny/laravel-repository/blob/master/LICENSE)
+
+
 
 This package provides an abstraction layer for easily implementing industry-standard caching strategies with Eloquent models.
 
