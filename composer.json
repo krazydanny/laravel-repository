@@ -1,6 +1,6 @@
 {
     "name": "krazydanny/laravel-repository",
-    "description": "Laravel Repository",
+    "description": "An abstraction layer for easily implementing industry-standard caching strategies to Eloquent models.",
     "type": "library",
     "license": "MIT",
     "authors": [
