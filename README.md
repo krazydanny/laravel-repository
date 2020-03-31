@@ -658,8 +658,6 @@ Performs sync only for those models stored in cache with the log() method;
 Performs sync only for those models stored in cache with the index() method;
 
 
-
-
 <br>
 
 Pretty Queries
@@ -740,7 +738,7 @@ app( UserRepository::class )->forget( $query );
 
 **On events**
 
-Now let's say we want to invalidate some specific queries when you create or update a model. We could do something like this:
+Now let's say we want to invalidate some specific queries when creating or updating a model. We could do something like this:
 
 ```php
 namespace App\Repositories;
@@ -827,7 +825,7 @@ We would keep using forget() method as always, otherwise it would be expensive a
 
 **On events**
 
-Now let's say we want to update model A in cache when model B is updated.
+Let's assume we want to update model A in cache when model B is updated.
 
 We could do something like this in the user observer:
 
@@ -857,14 +855,14 @@ Repository Events
 An observer can also be attached repositories in order to listen some useful repository-level events.
 
 ```php
-app( UserRepository::class )->observe( new YourUserRepositoryObserver );
+app( UserRepository::class )->observe( UserRepositoryObserver::class );
 
 ```
 
 **Some use cases...**
 
-- Monitor the usage of our caching strategy in production environments and check if it was our best choice :)
-- 
+- Monitoring usage of our caching strategy in production environments.
+- Have a special treatment for models or query results loaded from cache than those retrieved from database.
 
 
 ### cacheHit
@@ -882,22 +880,21 @@ use App\Repositories\UserRepository;
 
 class UserRepositoryObserver {   
 
-	# triggered when model or query results are found in cache
+    // triggered when model or query results are found in cache
     public function cacheHit ( $mixed ) {
 
     	// for example:
-
     	if ( $mixed instanceof User ) {
 
-    		// we can do something when a specific model was found in cache
+    		// something when a specific model was found in cache
     	}
     	else if ( $mixed instanceof Collection ) {
 
-    		// we can do something when retrieving find() query results
+    		// something when find() query results were found
     	}
     	else if ( \is_int($mixed) ) {
 
-    		// we can do something when retrieving count() query results
+    		// something when count() query result was found
     	}
     }
 
@@ -921,10 +918,15 @@ use App\Repositories\UserRepository;
 
 class UserRepositoryObserver {   
 
-	# triggered when model or query results were NOT found in cache
+    // triggered when model or query results were NOT found in cache
     public function cacheMiss ( $mixed ) {
 
-    	// we can do something here
+    	if ( $mixed ) {
+
+    		// we can do something when model or query results were found in database
+    	}
+
+    	// or something else were no results were found at all
     }
 
     // here other observer methods
@@ -954,6 +956,18 @@ app( UserRepository::class )->handleDatabaseExceptions(function( $e ){
 })
 
 ```
+
+### The silently() method
+
+When called before any method, that operation will not throw database nor cache exceptions. Unless we've throw it inside handleDatabaseExceptions() or handleCacheStoreExceptions() methods.
+
+For example:
+
+```php
+app( UserRepository::class )->silently()->rememberForever()->get( $user_id );
+
+```
+
 
 <br>
 

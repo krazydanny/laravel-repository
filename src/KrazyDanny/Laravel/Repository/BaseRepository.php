@@ -19,13 +19,15 @@ class BaseRepository implements RepositoryInterface {
     protected $cachePrefix;
     protected $model;
 
-    protected $ttl          = 0;
-    protected $fromCache    = false;
-    protected $skip         = false;
-    protected $take         = false;
-    protected $observer     = null;
-
-    protected static $observerClass  = null;
+    protected $ttl           = 0;
+    protected $fromCache     = false;
+    protected $skip          = false;
+    protected $take          = false;
+    protected $observer      = null;
+    protected $observerClass = null;
+    protected $dbHandler     = null;
+    protected $cacheHandler  = null;
+    protected $mute          = false;
 
 
     public function __construct ( 
@@ -56,9 +58,9 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    static public function observe ( string $class ) {
+    public function observe ( string $class ) {
 
-        self::$observerClass = $class;
+        $this->observerClass = $class;
     }
 
 
@@ -68,11 +70,11 @@ class BaseRepository implements RepositoryInterface {
     ) : bool
     {
 
-        if ( self::$observerClass ) {
+        if ( $this->observerClass ) {
 
             if ( !$this->observer ) {
 
-                $class = self::$observerClass;
+                $class = $this->observerClass;
                 $this->observer = new $class();
             }
 
@@ -84,6 +86,12 @@ class BaseRepository implements RepositoryInterface {
         }
 
         return false;
+    }
+
+
+    public function silently ( ) {
+
+        $this->mute = true;
     }
 
 
@@ -165,9 +173,17 @@ class BaseRepository implements RepositoryInterface {
 
         if ( $this->ttl != 0 || $this->fromCache ) {
 
-            $data  = Cache::get(     
-                $this->cachePrefix.':'.$id 
-            );
+            try {
+
+                $data  = Cache::get(     
+                    $this->cachePrefix.':'.$id 
+                );                
+            }
+            catch ( \Exception $e ) {
+
+                $data  = null;
+                $this->handleCacheException( $e );
+            }
 
             if ( $data ) {
 
@@ -180,17 +196,22 @@ class BaseRepository implements RepositoryInterface {
 
                 if ( $model ) {
 
-                    $this->fireObserverEvent(
-                        'cacheHit',
-                        $model
+                    $this->detectObserverEvent( 
+                        true, 
+                        $model 
                     );
                 }
 
-                return $model;      
+                return $model;  
             }
             else if ( $this->fromCache ) {
 
                 $this->clearSettings();
+
+                $this->detectObserverEvent( 
+                    false, 
+                    null 
+                );
 
                 return null;
             }
@@ -202,9 +223,9 @@ class BaseRepository implements RepositoryInterface {
 
                     $this->storeModelInCache( $model );
 
-                    $this->fireObserverEvent(
-                        'databaseHit',
-                        $model
+                    $this->detectObserverEvent( 
+                        false, 
+                        $model 
                     );
                 }
 
@@ -226,6 +247,7 @@ class BaseRepository implements RepositoryInterface {
         $this->take      = false;
         $this->skip      = false;
         $this->fromCache = false;
+        $this->mute      = false;
     }
 
 
@@ -300,24 +322,21 @@ class BaseRepository implements RepositoryInterface {
     ) : ?Model 
     {
 
-        $dbHit = false;
-        $ttl   = $this->ttl;
+        $ttl  = $this->ttl;
+        $hit  = true;
 
         $data = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder, $ttl, $dbHit ) {
+            function () use ( $queryBuilder, $ttl, $hit ) {
 
+                $hit   = false;
                 $model = $queryBuilder->first();
 
                 if ( $model ) {
 
-                    $dbHit = true;
-
-                    if ( $ttl == 0 ) {
-
+                    if ( $ttl == 0 )
                         return $model;
-                    }   
-
+                    
                     return $model->toArray();    
                 }
 
@@ -326,6 +345,11 @@ class BaseRepository implements RepositoryInterface {
             $this->generateQueryCacheKey(
                 $queryBuilder
             ).':first'
+        );
+
+        $this->detectObserverEvent( 
+            $hit, 
+            $data
         );
 
         if ( is_array($data) ) {
@@ -338,14 +362,7 @@ class BaseRepository implements RepositoryInterface {
 
             $class::reguard();
 
-            $model = $models[0] ?? false;
-
-            if ( !$model )
-                return null;
-
-            $this->detectObserverEvent( $dbHit, $model );
-
-            return $model;
+            return $models[0] ?? null;
         }
 
         return $data;
@@ -354,22 +371,60 @@ class BaseRepository implements RepositoryInterface {
 
     protected function index ( Model $model ) {
 
-        if ( Cache::getStore() instanceof RedisStore ) {
+        try {
 
-            Cache::getStore()->connection()->zadd(
+            $store = Cache::getStore();
+        }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }  
+
+        if ( !$store instanceof RedisStore ) {
+
+            throw new \Exception(
+                'log() is only available for the following cache stores: Illuminate\Cache\RedisStore'
+            );
+        }
+
+        try {
+
+            $store->connection()->zadd(
                 $this->cachePrefix.':index',
                 \time(),
                 $model->getKey()
             );
         }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }   
+
+
     }
 
 
     public function log ( Model $model ) {
 
-        if ( Cache::getStore() instanceof RedisStore ) {
+        try {
 
-            Cache::getStore()->connection()->zadd(
+            $store = Cache::getStore();
+        }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }  
+
+        if ( !$store instanceof RedisStore ) {
+
+            throw new \Exception(
+                'log() is only available for the following cache stores: Illuminate\Cache\RedisStore'
+            );
+        }
+
+        try {
+
+            $store->connection()->zadd(
                 $this->cachePrefix.':log',
                 \time(),
                 \serialize(
@@ -377,6 +432,10 @@ class BaseRepository implements RepositoryInterface {
                 )
             );
         }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }            
 
         $this->clearSettings();        
     }
@@ -411,21 +470,39 @@ class BaseRepository implements RepositoryInterface {
         int $take
     ) : Collection
     {
-        if ( !Cache::getStore() instanceof RedisStore ) {
+        try {
+
+            $store = Cache::getStore();
+        }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }  
+
+        if ( !$store instanceof RedisStore ) {
 
             throw new \Exception(
-                'Sync is only available for the following cache stores: Illuminate\Cache\RedisStore'
+                'sync() is only available for the following cache stores: Illuminate\Cache\RedisStore'
             );
         }
 
-        $ids = Cache::getStore()->connection()->zrangebyscore(
-            $this->cachePrefix.':index',
-            $written_since,
-            $written_until,
-            [
-                'LIMIT' => [ $skip, $take ],
-            ]
-        );
+        try {
+
+            $ids = $store->connection()->zrangebyscore(
+                $this->cachePrefix.':index',
+                $written_since,
+                $written_until,
+                [
+                    'LIMIT' => [ $skip, $take ],
+                ]
+            );            
+        }
+        catch ( \Exception $e ) {
+
+            $ids = [];
+
+            $this->handleCacheException( $e );
+        }  
 
         if ( empty( $ids ) )
             return new Collection;
@@ -439,10 +516,19 @@ class BaseRepository implements RepositoryInterface {
 
         unset( $ids );
 
-        $data =  \call_user_func_array( 
-            [ $redis, "mget" ], 
-            $keys
-        );
+        try {
+
+            $data =  \call_user_func_array( 
+                [ $store, "mget" ], 
+                $keys
+            );            
+        }
+        catch ( \Exception $e ) {
+
+            $data = [];
+
+            $this->handleCacheException( $e );
+        }
 
         unset( $keys );
 
@@ -457,23 +543,41 @@ class BaseRepository implements RepositoryInterface {
         int $take
     ) : Collection
     {
-        if ( !Cache::getStore() instanceof RedisStore ) {
+        try {
+
+            $store = Cache::getStore();
+        }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }  
+
+        if ( !$store instanceof RedisStore ) {
 
             throw new \Exception(
-                'Sync is only available for the following cache stores: Illuminate\Cache\RedisStore'
+                'sync() is only available for the following cache stores: Illuminate\Cache\RedisStore'
             );
         }
 
-        return $this->unserializeMulti(
-            Cache::getStore()->connection()->zrangebyscore(
+        try {
+
+            $result = $store->connection()->zrangebyscore(
                 $this->cachePrefix.':log',
                 $written_since,
                 $written_until,
                 [
                     'LIMIT' => [ $skip, $take ],
                 ]
-            )
-        );
+            );
+        }
+        catch ( \Exception $e ) {
+
+            $result = [];
+
+            $this->handleCacheException( $e );
+        }  
+
+        return $this->unserializeMulti( $result );
     }    
 
 
@@ -483,21 +587,30 @@ class BaseRepository implements RepositoryInterface {
         bool $forget = true
     )
     {
-        $redis = Cache::getStore()->connection();
+        try {
 
-        if ( $forget ) {
+            $store = Cache::getStore()->connection();
 
-            \call_user_func_array( 
-                [ $redis, "unlink" ], 
-                $keys
+            if ( $forget ) {
+
+                \call_user_func_array( 
+                    [ $store, "unlink" ], 
+                    $keys
+                );
+            }
+
+            return $store->zremrangebyscore(
+                $this->cachePrefix.':index',
+                $written_since,
+                $written_until
             );
         }
+        catch ( \Exception $e ) {
 
-        return $redis->zremrangebyscore(
-            $this->cachePrefix.':index',
-            $written_since,
-            $written_until
-        );
+            $this->handleCacheException( $e );
+        }
+
+        return false;
     }
 
 
@@ -506,12 +619,20 @@ class BaseRepository implements RepositoryInterface {
         int $written_until
     )
     {
+        try {
 
-        return Cache::getStore()->connection()->zremrangebyscore(
-            $this->cachePrefix.':index',
-            $written_since,
-            $written_until
-        );
+            return Cache::getStore()->connection()->zremrangebyscore(
+                $this->cachePrefix.':index',
+                $written_since,
+                $written_until
+            );
+        }
+        catch ( \Exception $e ) {
+
+            $this->handleCacheException( $e );
+        }
+
+        return false;
     }    
 
 
@@ -519,38 +640,33 @@ class BaseRepository implements RepositoryInterface {
         Builder $queryBuilder 
     ) : Collection 
     {
-        $dbHit = false;
-        $ttl   = $this->ttl;
+        $ttl  = $this->ttl;
+        $hit  = true;
 
         $data = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder, $ttl, $dbHit ) {
+            function () use ( $queryBuilder, $ttl, $hit ) {
+
+                $hit = false;
 
                 if ( $ttl == 0 ) {
-
-                    $r = $queryBuilder->get();
-                } 
-                else {
-
-                    $r = $queryBuilder->get()->toArray();
+                    return $queryBuilder->get();
                 }
 
-                if ( $r )
-                    $dbHit = true;
-
-                return $r;
+                return $queryBuilder->get()->toArray();
             },
             $this->generateQueryCacheKey(
                 $queryBuilder
             )            
         );
 
-        $this->detectObserverEvent( $dbHit, $data );
+        $this->detectObserverEvent( 
+            $hit, 
+            $data 
+        );
 
-        if ( $data instanceof Collection ) {
-
+        if ( $data instanceof Collection )
             return $data;
-        }
 
         if ( !$data )
             $data = [];
@@ -566,33 +682,15 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    protected function detectObserverEvent ( 
-        bool $dbHit,
-        $mixed
-    ) {
-
-        if ( $dbHit ) {
-
-            $this->fireObserverEvent( 'cacheMiss', $mixed );
-        }
-        else if ( $mixed ) {
-
-            $this->fireObserverEvent( 'cacheHit', $mixed );
-        }
-    }
-
-
     public function count ( 
         Builder $queryBuilder 
     ) : int 
     {
-        $dbHit = false;
+        $hit = true;
 
-        $c = $this->query(
+        $c   = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder, $dbHit ) {
-
-                $dbHit = true;
+            function () use ( $queryBuilder, $hit ) {
 
                 return $queryBuilder->get()->count();
             },
@@ -601,9 +699,12 @@ class BaseRepository implements RepositoryInterface {
             ).':count'
         );
 
-        $this->detectObserverEvent( $dbHit, $c );
+        $this->detectObserverEvent( 
+            $hit, 
+            $c
+        );
 
-        return $c;
+        return $c;    
     }
 
 
@@ -697,7 +798,7 @@ class BaseRepository implements RepositoryInterface {
                     $bulk[] = $key.':first';
                     $bulk[] = $key.':count';
                 }
-            }   
+            }
         }
         else {
 
@@ -718,20 +819,43 @@ class BaseRepository implements RepositoryInterface {
         if ( empty($bulk) )
             return false;        
 
-        $store = Cache::getStore();
+        try {
+
+            $store = Cache::getStore();
+        }
+        catch ( \Exception $e ) {
+
+            $store = false;
+
+            $this->handleCacheException( $e );
+        }        
 
         if ( $store instanceof RedisStore ) {
 
-            return \call_user_func_array( 
-                [ $store->connection(), "unlink" ], 
-                $bulk
-            );
+            try {
+
+                return \call_user_func_array( 
+                    [ $store->connection(), "unlink" ], 
+                    $bulk
+                );
+            }
+            catch ( \Exception $e ) {
+
+                $this->handleCacheException( $e );
+            }            
         }
         else {
 
             foreach ( $bulk as $key ) {
 
-                Cache::forget( $key );
+                try {
+
+                    Cache::forget( $key );
+                }
+                catch ( \Exception $e ) {
+
+                    $this->handleCacheException( $e );
+                }
             }
 
             return true;
@@ -784,7 +908,7 @@ class BaseRepository implements RepositoryInterface {
         $written_until = $options['written_until'] ?? \time();
         $object_limit  = $options['object_limit'] ?? self::OBJECT_LIMIT;
 
-        $source = $options['source'] ?? 'log';
+        $source = $options['method'] ?? 'log';
 
         $skip = 0;
         $take = $object_limit;
@@ -821,11 +945,11 @@ class BaseRepository implements RepositoryInterface {
 
         if ( 
             $r
-            && $options['clean'] ?? false 
+            && $options['clean_cache'] ?? true 
         ) {
 
             $this->cleanAfterSync(
-                $using,
+                $source,
                 $written_since,
                 $written_until
             );
@@ -855,24 +979,50 @@ class BaseRepository implements RepositoryInterface {
 
             $this->clearSettings();
 
-            return Cache::get( $key );            
+            try {
+
+                return Cache::get( $key );            
+            }
+            catch ( \Exception $e ) {
+
+                return null;
+
+                $this->handleCacheException( $e );
+            }            
         }
         else if ( $this->ttl < 0 ) {
 
             $this->clearSettings();
 
-            return Cache::rememberForever( 
-                $key, 
-                $callback
-            );
+            try {
+
+                return Cache::rememberForever( 
+                    $key, 
+                    $callback
+                );
+            }
+            catch ( \Exception $e ) {
+
+                return null;
+
+                $this->handleCacheException( $e );
+            }            
         }
         else if ( $this->ttl > 0 ) {
 
-            $r = Cache::remember(                 
-                $key,
-                $this->ttl,
-                $callback
-            );
+            try {
+
+                $r = Cache::remember(                 
+                    $key,
+                    $this->ttl,
+                    $callback
+                );
+            }
+            catch ( \Exception $e ) {
+
+                $r = null;
+                $this->handleCacheException( $e );
+            }
 
             $this->clearSettings();
 
@@ -892,20 +1042,34 @@ class BaseRepository implements RepositoryInterface {
         $value
     )
     {
-        if ( $this->ttl < 0 ) {    
+        if ( $this->ttl < 0 ) {
 
-            return Cache::forever(     
-                $key, 
-                $value
-            );
+            try {
+
+                return Cache::forever(     
+                    $key, 
+                    $value
+                );
+            }
+            catch ( \Exception $e ) {
+
+                $this->handleCacheException( $e );
+            }
         }
         else if ( $this->ttl > 0 ) {
 
-            return Cache::put(     
-                $key, 
-                $value, 
-                $this->ttl
-            );
+            try {
+
+                return Cache::put(     
+                    $key, 
+                    $value, 
+                    $this->ttl
+                );
+            }
+            catch ( \Exception $e ) {
+
+                $this->handleCacheException( $e );
+            }
         }
 
         return false;
@@ -940,17 +1104,61 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    public function handleDatabaseException ( 
-        \Closure $callback
+    protected function handleDbException ( \Exception $e ) {
+
+        if ( $this->dbHandler ) {
+
+            $callback = $this->dbHandler;
+
+            return $callback( $e );
+        }
+
+        if ( !$this->mute )
+            throw $e;
+    }
+
+
+    protected function handleCacheException ( \Exception $e ) {
+
+        if ( $this->cacheHandler ) {
+
+            $callback = $this->cacheHandler;
+
+            return $callback( $e );
+        }
+
+        if ( !$this->mute )
+            throw $e;
+    }
+
+
+    public function handleDatabaseExceptions ( 
+        \Closure $callback      
     ){
         $this->dbHandler = $callback;
     }
 
 
-    public function handleCacheStoreException ( 
+    public function handleCacheStoreExceptions ( 
         \Closure $callback
     ){
         $this->cacheHandler = $callback;
+    }
+
+
+    protected function detectObserverEvent ( 
+        bool $dbHit,
+        $mixed
+    ) {
+
+        if ( $dbHit ) {
+
+            $this->fireObserverEvent( 'cacheMiss', $mixed );
+        }
+        else if ( $mixed ) {
+
+            $this->fireObserverEvent( 'cacheHit', $mixed );
+        }
     }
 
 }
