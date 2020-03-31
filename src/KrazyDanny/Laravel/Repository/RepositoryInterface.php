@@ -1,100 +1,11 @@
 <?php
 
-namespace KrazyDanny\Laravel\Repository;
+namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-/*
-
-----------------------
-READ STRATEGIES 
-----------------------
-
-No-Cache:
-
-$repository->get( $id );
-$repository->find( $queryBuilder );
-$repository->count( $queryBuilder );
-$repository->first( $queryBuilder );
-
-----------------------
-
-Cache-Only:
-
-$repository->fromCache()->get( $id );
-$repository->fromCache()->find( $queryBuilder );
-$repository->fromCache()->count( $queryBuilder );
-$repository->fromCache()->first( $queryBuilder );
-
-----------------------
-
-Cache-Aside:
-( get from db if not in cache )
-
-$repository->remember()->during( $ttl )->get( $id );
-$repository->remember()->during( $ttl )->find( $queryBuilder );
-$repository->remember()->during( $ttl )->count( $queryBuilder );
-$repository->remember()->during( $ttl )->first( $queryBuilder );
-
-----------------------
-
-Read-Through:
-( get from db only the first time )
-
-$repository->rememberForever()->get( $id );
-$repository->rememberForever()->find( $queryBuilder );
-$repository->rememberForever()->count( $queryBuilder );
-$repository->rememberForever()->first( $queryBuilder );
-
-
-----------------------
-WRITE STRATEGIES 
-----------------------
-
-Write-Around:
-( avoids caching when writing )
-
-$repository->save( $model );
-
-----------------------
-
-Write-Back / Write Behind Caching:
-( saves only in cache when writing, then sync with db on schedule )
-
-$repository->rememberForever( $model );
-$repository->sync( 
-    function( $collection ) {
-        
-        foreach ( $collection as $model ) {
-            // do database engine specific logic here
-        }        
-
-        if ( $ok )
-            return true; // if true remove model ids from sync queue
-        
-        return false; // if false keeps model ids in sync queue and tries again next time sync method is called
-    },
-    [
-    ] 
-);
-
-----------------------
-
-Write-Through:
-( saves in db and in cache )
-
-$repository->rememberForever()->save( $model );
-
-----------------------
-
-Write-Through + ttl / Eviction Policy:
-( saves in db and in cache with expiration ):
-
-$repository->remember()->during( $ttl )->save( $model );
-
-*/
 
 interface RepositoryInterface {
 
@@ -189,13 +100,19 @@ interface RepositoryInterface {
     ) : bool;
 
 
-    public function handleDatabaseException ( 
+    public function handleDatabaseExceptions ( 
         \Closure $callback
     );
 
 
-	public function handleCacheStoreException ( 
+	public function handleCacheStoreExceptions ( 
         \Closure $callback
     );
+
+
+    public function observe ( string $class );
+
+
+    public function silently ( );
 
 }

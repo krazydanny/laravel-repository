@@ -33,6 +33,7 @@ This package provides an abstraction layer for easily implementing industry-stan
 	- [Exception handling](#exception-handling)
 		- [Database Exceptions](#database-exceptions)
 		- [Cache Store Exceptions](#cache-store-exceptions)
+	- [Repository Events](#repository-events)
 	- [Some things I wish somebody told me before](#some-things-i-wish-somebody-told-me-before)
 	- [Bibliography](#bibliography)
 
@@ -583,26 +584,46 @@ In some cache failure scenarios data may be permanently lost.
 
 *IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY (at the moment)*
 
-With the log() method Laravel Model Repository will store data in cache untill you call the sync() method which will iterate many (batch) of cached models at once, alowing us to persist them the way our project needs through a callback function.
+With the log() or index() method Laravel Model Repository will store data in cache untill you call the sync() method which will iterate many (batch) of cached models at once, allowing us to persist them the way our project needs through a callback function.
 
 
-First write models in cache (ONLY):
+First write models in cache:
+
+Using **log()**
+
+Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance and storage when you don't need to access them until they are persisted in database.
+
 ```php
-$model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
+$model = app( TransactionsRepository::class )->log( new Transactions( $data ) );
 
 ```
 
+Using **index()**
+
+Stores models in a way that they are available to be loaded from cache by get() method too. Useful when models need to be accesible before they are persisted.
+
+```php
+$model = app( TransactionsRepository::class )->index( new Transactions( $data ) );
+
+```
+
+Then massively persist models in database:
+
+Using **sync()** 
+
 The sync() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
 
-Then massively persist them in database:
+
 ```php
-app( SomeModelRepository::class )->sync( 
+app( TransactionsRepository::class )->sync( 
 
     // the first param is a callback which returns true if models were persisted successfully, false otherwise
     function( $collection ) {
         
         foreach ( $collection as $model ) {
+
             // do database library custom and optimized logic here
+
             // for example: you could use bulk inserts and transactions in order to improve both performance and consistency
         }        
 
@@ -611,16 +632,31 @@ app( SomeModelRepository::class )->sync(
         
         return false; // if false keeps model ids in sync queue and tries again next time sync method is called
     },
+
     // the second param (optional) is an array with one or many of the following available options
     [
         'written_since' => 0, // process only models written since ths specified timestamp in seconds
         'written_until' => \time(), // process only models written until the given timestamp in seconds
         'object_limit'  => 500, // the object limit to be processed at the same time (to prevent memory overflows)
-        'clean_cache'   => true, // if callback returns true, marks models as persisted
+        'clean_cache'   => true, // if true and callback returns true, marks models as persisted
+        'method'        => 'log' // log | index
     ] 
 );
 
 ```
+
+The **method** parameter:
+
+It has two possible values.
+
+- **log** (default)
+
+Performs sync only for those models stored in cache with the log() method;
+
+- **index**
+
+Performs sync only for those models stored in cache with the index() method;
+
 
 <br>
 
@@ -686,7 +722,7 @@ To save storage we need data to be removed from cache, so we'll use the forget()
 
 **For specific models:**
 ```php
-app( UserRepository::class )->forget( $user, $forgets );
+app( UserRepository::class )->forget( $user );
 
 ```
 **For queries:**
@@ -696,13 +732,13 @@ $user->active = false;
 $user->save();
 
 $query = User::where( 'active', true );
-app( UserRepository::class )->forget( $query, $forgets );
+app( UserRepository::class )->forget( $query );
 
 ```
 
 **On events**
 
-Now let's say we want to invalidate some specific queries when you create or update a model. We could do something like this:
+Now let's say we want to invalidate some specific queries when creating or updating a model. We could do something like this:
 
 ```php
 namespace App\Repositories;
@@ -789,7 +825,7 @@ We would keep using forget() method as always, otherwise it would be expensive a
 
 **On events**
 
-Now let's say we want to update model A in cache when model B is updated.
+Let's assume we want to update model A in cache when model B is updated.
 
 We could do something like this in the user observer:
 
@@ -810,12 +846,128 @@ class UserSettingsObserver {
 }
 
 ```
+
+<br>
+
+Repository Events
+-----------------
+
+An observer can also be attached repositories in order to listen some useful repository-level events.
+
+```php
+app( UserRepository::class )->observe( UserRepositoryObserver::class );
+
+```
+
+**Some use cases...**
+
+- Monitoring usage of our caching strategy in production environments.
+- Have a special treatment for models or query results loaded from cache than those retrieved from database.
+
+
+### cacheHit
+
+Observing this event allows us to take action when model or query result are found in cache.
+
+
+```php
+namespace App\Observers;
+
+use App\User;
+use Illuminate\Database\Eloquent\Collection;
+
+use App\Repositories\UserRepository;
+
+class UserRepositoryObserver {   
+
+    // triggered when model or query results are found in cache
+    public function cacheHit ( $mixed ) {
+
+    	// for example:
+    	if ( $mixed instanceof User ) {
+
+    		// something when a specific model was found in cache
+    	}
+    	else if ( $mixed instanceof Collection ) {
+
+    		// something when find() query results were found
+    	}
+    	else if ( \is_int($mixed) ) {
+
+    		// something when count() query result was found
+    	}
+    }
+
+    // here other observer methods
+}
+
+```
+
+### cacheMiss
+
+Also we can do something when model or query results are NOT found in cache.
+
+
+```php
+namespace App\Observers;
+
+use App\User;
+use Illuminate\Database\Eloquent\Collection;
+
+use App\Repositories\UserRepository;
+
+class UserRepositoryObserver {   
+
+    // triggered when model or query results were NOT found in cache
+    public function cacheMiss ( $mixed ) {
+
+    	if ( $mixed ) {
+
+    		// we can do something when model or query results were found in database
+    	}
+
+    	// or something else were no results were found at all
+    }
+
+    // here other observer methods
+}
+
+```
+
 <br>
 
 Exceptions handling
 -------------------
 
-COMING SOON!
+### Cache Exceptions
+
+```php
+app( UserRepository::class )->handleCacheExceptions(function( $e ){
+	// here we can do something like log the exception silently
+})
+
+```
+
+### Database Exceptions
+
+```php
+app( UserRepository::class )->handleDatabaseExceptions(function( $e ){
+	// here we can do something like log the exception silently
+})
+
+```
+
+### The silently() method
+
+When called before any method, that operation will not throw database nor cache exceptions. Unless we've throw it inside handleDatabaseExceptions() or handleCacheStoreExceptions() methods.
+
+For example:
+
+```php
+app( UserRepository::class )->silently()->rememberForever()->get( $user_id );
+
+```
+
 
 <br>
 
