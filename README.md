@@ -959,7 +959,7 @@ app( UserRepository::class )->handleDatabaseExceptions(function( $e ){
 
 ### The silently() method
 
-When called before any method, that operation will not throw database nor cache exceptions. Unless we've throw it inside handleDatabaseExceptions() or handleCacheStoreExceptions() methods.
+When called before any method, that operation will not throw database nor cache exceptions. Unless we've thrown them inside handleDatabaseExceptions() or handleCacheStoreExceptions() methods.
 
 For example:
 
