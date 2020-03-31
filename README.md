@@ -982,7 +982,7 @@ Every caching strategy has it's own advantages and disadvantages. Is up to you m
 
 Even in the same project you may use different caching strategies for different models. For example: Is not the same caching millons of transaction logs everyday than registering a few new users in your app.
 
-Also this library is designed to be implemented on the go. This means you can progressively apply caching techniques.
+Also this library is designed to be implemented on the go. This means you can progressively apply caching techniques on specific calls.
 
 Lets say we currently have the following line in many places of our proyect:
 
