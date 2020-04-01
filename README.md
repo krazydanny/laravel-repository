@@ -839,7 +839,7 @@ class UserSettingsObserver {
 
     public function saved ( UserSettings $model ) {
 
-    	app( UserRepository::class )->forget( $model->user_id );
+    	app( UserRepository::class )->remember( $model )->during( 3600 );
     }
 
     # here other observer methods
