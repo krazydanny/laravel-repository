@@ -78,9 +78,21 @@ interface RepositoryInterface {
 		array &$bulk = null
 	);
 
-
 	// logs model's current state in order to be processed by sync()
+
 	public function log ( Model $model );
+
+	public function index ( Model $model );
+
+
+
+	// autocomplete
+
+	// call before find() to be autocompletable
+	public function autocompletable ();
+
+	// get autocomplete results
+	public function autocomplete ( $pattern );
 
 
     // runs a callback for all models stored in cache using ->rememberForever( $model ) method (Write-Aside Strategy) allowing to persist them in database or any other processing
