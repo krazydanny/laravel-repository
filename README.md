@@ -68,28 +68,28 @@ Make sure you have properly configured a cache connection and driver in your Lar
 
  Laravel  | Package
 :---------|:----------
- 5.6.x    | 0.9-beta
- 5.7.x    | 0.9-beta
- 5.8.x    | 0.9-beta
- 6.x      | 0.9-beta
- 7.x      | 0.9-beta
+ 5.6.x    | 1.0
+ 5.7.x    | 1.0
+ 5.8.x    | 1.0
+ 6.x      | 1.0
+ 7.x      | 1.0
 
 
 ### Lumen version Compatibility
 
  Lumen    | Package
 :---------|:----------
- 5.6.x    | 0.9-beta
- 5.7.x    | 0.9-beta
- 5.8.x    | 0.9-beta
- 6.x      | 0.9-beta
+ 5.6.x    | 1.0
+ 5.7.x    | 1.0
+ 5.8.x    | 1.0
+ 6.x      | 1.0
 
 
 
 ### Install the package via Composer
 
 ```bash
-$ composer require krazydanny/laravel-repository:v0.9-beta
+$ composer require krazydanny/laravel-repository
 ```
 
 <br>
@@ -984,14 +984,14 @@ Even in the same project you may use different caching strategies for different 
 
 Also this library is designed to be implemented on the go. This means you can progressively apply caching techniques on specific calls.
 
-Lets say we currently have the following line in many places of our proyect:
+Lets say we currently have the following line in many places of our project:
 
 ```php
 $model = SomeModel::create( $data );
 
 ```
 
-Now assume we want to implement write-back strategy for that model only in some critical places of our proyect and see how it goes. Then we should only replace those specifice calls with:
+Now assume we want to implement write-back strategy for that model only in some critical places of our project and see how it goes. Then we should only replace those specifice calls with:
 
 ```php
 $model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
