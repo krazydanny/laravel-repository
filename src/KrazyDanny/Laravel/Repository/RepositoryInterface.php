@@ -68,6 +68,7 @@ interface RepositoryInterface {
 	// sets the amount of entities to be retrieved using find() method
     public function take ( int $entities ); // return $this;
  	
+
  	// sets the amount of entities to be skiped from the begining of the result
     public function skip ( int $entities ); // return $this;
 
@@ -78,24 +79,16 @@ interface RepositoryInterface {
 		array &$bulk = null
 	);
 
-	// logs model's current state in order to be processed by sync()
 
-	public function log ( Model $model );
-
-	public function index ( Model $model );
+	// saves complete model's data in a buffer in order to be processed by persist later
+	public function buffer ( Model $model );
 
 
-
-	// autocomplete
-
-	// call before find() to be autocompletable
-	public function autocompletable ();
-
-	// get autocomplete results
-	public function autocomplete ( $pattern );
+	// saves model's id in an index to be processed by persist later. NOTE: during persist model data will be retrieved from the model's specific cache key
+	public function index ( Model $model );	
 
 
-    // runs a callback for all models stored in cache using ->rememberForever( $model ) method (Write-Aside Strategy) allowing to persist them in database or any other processing
+    // runs a callback for all models stored in cache using ->rememberForever( $model ) method allowing to persist them in database or any other processing (Write-Back Strategy)
     // options:
     /*
     	[
@@ -103,10 +96,10 @@ interface RepositoryInterface {
     		'written_until' => \time(),
     		'object_limit'	=> 1000,
     		'clean_cache'	=> true,
-    		'source'		=> 'log' | 'index',
+    		'source'		=> 'buffer' | 'index',
     	]
     */
-	public function sync ( 
+	public function persist ( 
         \Closure $callback,
         array $options = []
     ) : bool;
