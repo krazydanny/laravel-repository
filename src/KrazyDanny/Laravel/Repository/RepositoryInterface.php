@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace KrazyDanny\Laravel\Repository;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
