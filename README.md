@@ -168,6 +168,22 @@ $userRepository = app( UserRepository::class );
 
 ```
 
+You can also typehint it as a parameter in controllers, event listeners, middleware or any other service class and laravel will automatically inject the repository instance
+
+```php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
+
+class UserController extends Controller
+{
+	public function myMethod( UserRepository $userRepository, $id){
+		// you can now use the repository to work with cached models
+		$user = $userRepository->get( $id );
+	}
+}
+```
 <br>
 
 Eloquent like methods
