@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BaseRepository implements RepositoryInterface {
 
-    const OBJECT_LIMIT      = 300;
+    const OBJECT_LIMIT       = 300;
 
     protected $class;
     protected $cachePrefix;
@@ -369,7 +369,7 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    protected function index ( Model $model ) {
+    public function index ( Model $model ) {
 
         try {
 
@@ -383,7 +383,7 @@ class BaseRepository implements RepositoryInterface {
         if ( !$store instanceof RedisStore ) {
 
             throw new \Exception(
-                'log() is only available for the following cache stores: Illuminate\Cache\RedisStore'
+                'buffer() is only available for the following cache stores: Illuminate\Cache\RedisStore'
             );
         }
 
@@ -400,11 +400,10 @@ class BaseRepository implements RepositoryInterface {
             $this->handleCacheException( $e );
         }   
 
-
     }
 
 
-    public function log ( Model $model ) {
+    public function buffer ( Model $model ) {
 
         try {
 
@@ -418,14 +417,14 @@ class BaseRepository implements RepositoryInterface {
         if ( !$store instanceof RedisStore ) {
 
             throw new \Exception(
-                'log() is only available for the following cache stores: Illuminate\Cache\RedisStore'
+                'buffer() is only available for the following cache stores: Illuminate\Cache\RedisStore'
             );
         }
 
         try {
 
             $store->connection()->zadd(
-                $this->cachePrefix.':log',
+                $this->cachePrefix.':buffer',
                 \time(),
                 \serialize(
                     $model->toArray()
@@ -435,9 +434,7 @@ class BaseRepository implements RepositoryInterface {
         catch ( \Exception $e ) {
 
             $this->handleCacheException( $e );
-        }            
-
-        $this->clearSettings();        
+        }
     }
 
 
@@ -482,7 +479,7 @@ class BaseRepository implements RepositoryInterface {
         if ( !$store instanceof RedisStore ) {
 
             throw new \Exception(
-                'sync() is only available for the following cache stores: Illuminate\Cache\RedisStore'
+                'persist() is only available for the following cache stores: Illuminate\Cache\RedisStore'
             );
         }
 
@@ -536,7 +533,7 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    protected function getModelsFromLog ( 
+    protected function getModelsFromBuffer ( 
         int $written_since,
         int $written_until,
         int $skip,
@@ -555,14 +552,14 @@ class BaseRepository implements RepositoryInterface {
         if ( !$store instanceof RedisStore ) {
 
             throw new \Exception(
-                'sync() is only available for the following cache stores: Illuminate\Cache\RedisStore'
+                'persist() is only available for the following cache stores: Illuminate\Cache\RedisStore'
             );
         }
 
         try {
 
             $result = $store->connection()->zrangebyscore(
-                $this->cachePrefix.':log',
+                $this->cachePrefix.':buffer',
                 $written_since,
                 $written_until,
                 [
@@ -614,7 +611,7 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    protected function cleanLog ( 
+    protected function cleanBuffer ( 
         int $written_since,
         int $written_until
     )
@@ -865,7 +862,7 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    protected function getModelsForSync ( 
+    protected function getModelsToPersist ( 
         string $source,
         int $written_since,
         int $written_until,
@@ -875,8 +872,8 @@ class BaseRepository implements RepositoryInterface {
 
         switch ( $source ) {
 
-            case 'log':
-                return $this->getModelsFromLog(
+            case 'buffer':
+                return $this->getModelsFromBuffer(
                     $written_since,
                     $written_until,
                     $skip,
@@ -893,13 +890,13 @@ class BaseRepository implements RepositoryInterface {
 
             default:
                 throw new \Exception(
-                    'Unsupported option, value must be log or index'
+                    'Unsupported option, value must be buffer or index'
                 );
         }
     }    
 
 
-    public function sync ( 
+    public function persist ( 
         \Closure $callback,
         array $options = []
     ) : bool 
@@ -908,12 +905,12 @@ class BaseRepository implements RepositoryInterface {
         $written_until = $options['written_until'] ?? \time();
         $object_limit  = $options['object_limit'] ?? self::OBJECT_LIMIT;
 
-        $source = $options['method'] ?? 'log';
+        $source = $options['method'] ?? 'buffer';
 
         $skip = 0;
         $take = $object_limit;
 
-        $models = $this->getModelsForSync(
+        $models = $this->getModelsToPersist(
             $source,
             $written_since,
             $written_until,
@@ -934,7 +931,7 @@ class BaseRepository implements RepositoryInterface {
             $skip += $object_limit;
             $take += $object_limit;
 
-            $models = $this->getModelsForSync(
+            $models = $this->getModelsToPersist(
                 $source,
                 $written_since,
                 $written_until,
@@ -948,7 +945,7 @@ class BaseRepository implements RepositoryInterface {
             && $options['clean_cache'] ?? true 
         ) {
 
-            $this->cleanAfterSync(
+            $this->cleanAfterPersist(
                 $source,
                 $written_since,
                 $written_until
@@ -1076,7 +1073,7 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    protected function cleanAfterSync ( 
+    protected function cleanAfterPersist ( 
         string $source,
         int $written_since,
         int $written_until
@@ -1084,8 +1081,8 @@ class BaseRepository implements RepositoryInterface {
 
         switch ( $source ) {
 
-            case 'log':
-                return $this->cleanLog(
+            case 'buffer':
+                return $this->cleanBuffer(
                     $written_since,
                     $written_until                  
                 );
@@ -1098,7 +1095,7 @@ class BaseRepository implements RepositoryInterface {
 
             default:
                 throw new \Exception(
-                    'Unsupported option, value must be log or index'
+                    'Unsupported option, value must be buffer or index'
                 );
         }
     }

@@ -584,17 +584,17 @@ In some cache failure scenarios data may be permanently lost.
 
 *IMPORTANT!! THIS STRATEGY IS AVAILABLE FOR REDIS CACHE STORES ONLY (at the moment)*
 
-With the log() or index() method Laravel Model Repository will store data in cache untill you call the sync() method which will iterate many (batch) of cached models at once, allowing us to persist them the way our project needs through a callback function.
+With the buffer() or index() method Laravel Model Repository will store data in cache untill you call the persist() method which will iterate many (batch) of cached models at once, allowing us to persist them the way our project needs through a callback function.
 
 
 First write models in cache:
 
-Using **log()**
+Using **buffer()**
 
-Stores models in cache in a way only accesible within the sync() method callback. Useful for optimizing performance and storage when you don't need to access them until they are persisted in database.
+Stores models in cache in a way only accesible within the persist() method callback. Useful for optimizing performance and storage when you don't need to access them until they are persisted in database.
 
 ```php
-$model = app( TransactionsRepository::class )->log( new Transactions( $data ) );
+$model = app( TransactionsRepository::class )->buffer( new Transactions( $data ) );
 
 ```
 
@@ -609,13 +609,13 @@ $model = app( TransactionsRepository::class )->index( new Transactions( $data ) 
 
 Then massively persist models in database:
 
-Using **sync()** 
+Using **persist()** 
 
-The sync() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
+The persist() method could be called later in a separate job or scheduled task, allowing us to manage how often we need to persist models into the database depending on our project's traffic and infrastructure.
 
 
 ```php
-app( TransactionsRepository::class )->sync( 
+app( TransactionsRepository::class )->persist( 
 
     // the first param is a callback which returns true if models were persisted successfully, false otherwise
     function( $collection ) {
@@ -628,9 +628,9 @@ app( TransactionsRepository::class )->sync(
         }        
 
         if ( $result )
-            return true; // if true remove model ids from sync queue
+            return true; // if true remove model ids from persist() queue
         
-        return false; // if false keeps model ids in sync queue and tries again next time sync method is called
+        return false; // if false keeps model ids in persist() queue and tries again next time persist() method is called
     },
 
     // the second param (optional) is an array with one or many of the following available options
@@ -639,7 +639,7 @@ app( TransactionsRepository::class )->sync(
         'written_until' => \time(), // process only models written until the given timestamp in seconds
         'object_limit'  => 500, // the object limit to be processed at the same time (to prevent memory overflows)
         'clean_cache'   => true, // if true and callback returns true, marks models as persisted
-        'method'        => 'log' // log | index
+        'method'        => 'buffer' // buffer | index
     ] 
 );
 
@@ -649,13 +649,13 @@ The **method** parameter:
 
 It has two possible values.
 
-- **log** (default)
+- **buffer** (default)
 
-Performs sync only for those models stored in cache with the log() method;
+Performs persist() only for those models stored in cache with the buffer() method;
 
 - **index**
 
-Performs sync only for those models stored in cache with the index() method;
+Performs persist() only for those models stored in cache with the index() method;
 
 
 <br>
@@ -994,7 +994,7 @@ $model = SomeModel::create( $data );
 Now assume we want to implement write-back strategy for that model only in some critical places of our project and see how it goes. Then we should only replace those specifice calls with:
 
 ```php
-$model = app( SomeModelRepository::class )->log( new SomeModel( $data ) );
+$model = app( SomeModelRepository::class )->buffer( new SomeModel( $data ) );
 
 ```
 
