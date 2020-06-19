@@ -920,7 +920,7 @@ class BaseRepository implements RepositoryInterface {
 
         $r = true;
 
-        while ( $models->isEmpty() ) {
+        while ( !$models->isEmpty() ) {
 
             if ( !$callback( $models ) ) {
 
