@@ -103,6 +103,25 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
+    public function according ( string $attribute ) {
+
+        if ( $this->model ) {
+
+            $this->ttl = (int)$this->model->$attribute;
+
+            $r = $this->storeModelInCache(
+                $this->model
+            );
+
+            $this->clearSettings();            
+
+            return $r;
+        }
+
+        return $this;
+    }        
+
+
     public function during ( int $seconds ) {
 
         $this->ttl = $seconds;

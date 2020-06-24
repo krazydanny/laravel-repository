@@ -23,6 +23,10 @@ interface RepositoryInterface {
 	public function during ( int $seconds );
 
 
+	// Does almost the same as during() but it reads the amount of seconds from a given model's attribute
+	public function according ( string $attribute )
+
+
 	// remembers object or queries in cache forever. 
 	// If model is passed returns boolean, otherwise returns $this
 	// Write-Aside Strategy
