@@ -68,21 +68,21 @@ Make sure you have properly configured a cache connection and driver in your Lar
 
  Laravel  | Package
 :---------|:----------
- 5.6.x    | 1.0.3
- 5.7.x    | 1.0.3
- 5.8.x    | 1.0.3
- 6.x      | 1.0.3
- 7.x      | 1.0.3
+ 5.6.x    | 1.0.4
+ 5.7.x    | 1.0.4
+ 5.8.x    | 1.0.4
+ 6.x      | 1.0.4
+ 7.x      | 1.0.4
 
 
 ### Lumen version Compatibility
 
  Lumen    | Package
 :---------|:----------
- 5.6.x    | 1.0.3
- 5.7.x    | 1.0.3
- 5.8.x    | 1.0.3
- 6.x      | 1.0.3
+ 5.6.x    | 1.0.4
+ 5.7.x    | 1.0.4
+ 5.8.x    | 1.0.4
+ 6.x      | 1.0.4
 
 
 
@@ -300,6 +300,18 @@ Also a model instance could be passed as parameter in order to store that specif
 app( UserRepository::class )->remember( $user )->during( 3600 );
 
 ```
+
+
+### according()
+
+The according() method does almost the same as during() but with a difference, it reads the time-to-live in seconds from a given model's attribute:
+
+```php
+app( ReservationsRepository::class )->remember( $reservation )->according( 'expiresIn' );
+
+```
+
+This is useful if different instance of the same class could have different or dynamic time-to-live values.
 
 
 
