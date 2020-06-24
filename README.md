@@ -311,7 +311,7 @@ app( ReservationsRepository::class )->remember( $reservation )->according( 'expi
 
 ```
 
-This is useful if different instance of the same class could have different or dynamic time-to-live values.
+This is useful if different instances of the same class have/need different or dynamic time-to-live values.
 
 
 
