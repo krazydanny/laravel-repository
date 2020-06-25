@@ -28,6 +28,7 @@ class BaseRepository implements RepositoryInterface {
     protected $dbHandler     = null;
     protected $cacheHandler  = null;
     protected $mute          = false;
+    protected $according     = false;
 
 
     public function __construct ( 
@@ -35,7 +36,7 @@ class BaseRepository implements RepositoryInterface {
         string $cache_prefix = null
     ) 
     {
-        $this->class = $class;
+        $this->class      = $class;
 
         if ( $cache_prefix ) {
 
@@ -105,9 +106,14 @@ class BaseRepository implements RepositoryInterface {
 
     public function according ( string $attribute ) {
 
+        $this->according = $attribute;
+
         if ( $this->model ) {
 
-            $this->ttl = (int)$this->model->$attribute;
+            $this->ttl = $this->getTTLFromAttribute( 
+                $model,
+                $attribute
+            );
 
             $r = $this->storeModelInCache(
                 $this->model
@@ -119,7 +125,21 @@ class BaseRepository implements RepositoryInterface {
         }
 
         return $this;
-    }        
+    }
+
+
+    protected function getTTLFromAttribute( 
+        Model $model,
+        string $attribute
+    ) : int
+    {
+        if ( $this->model->$attribute > 0 ) {
+
+            return (int)$this->model->$attribute;
+        }
+
+        return 0;
+    }
 
 
     public function during ( int $seconds ) {
@@ -240,6 +260,14 @@ class BaseRepository implements RepositoryInterface {
 
                 if ( $model ) {
 
+                    if ( $this->according ) {
+
+                        $this->ttl = $this->getTTLFromAttribute( 
+                            $model,
+                            $this->according
+                        );
+                    }
+
                     $this->storeModelInCache( $model );
 
                     $this->detectObserverEvent( 
@@ -262,11 +290,12 @@ class BaseRepository implements RepositoryInterface {
 
     protected function clearSettings () {
 
-        $this->ttl       = 0;
+        $this->ttl       = $this->defaultTTL;
         $this->take      = false;
         $this->skip      = false;
         $this->fromCache = false;
         $this->mute      = false;
+        $this->according = null;
     }
 
 
