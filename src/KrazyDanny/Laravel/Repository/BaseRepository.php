@@ -311,8 +311,17 @@ class BaseRepository implements RepositoryInterface {
 
         if ( $model ) {
 
-            if ( $this->ttl < 0 )
+            if ( $this->according ) {
+
+                $this->ttl = $this->getTTLFromAttribute(
+                    $model,
+                    $this->according
+                );
+            }
+            else if ( $this->ttl < 0 ) {
+
                 $this->index( $model );
+            }
 
             $this->storeModelInCache( $model );    
         }
@@ -327,8 +336,17 @@ class BaseRepository implements RepositoryInterface {
 
         if ( $model->save() ) {
 
-            if ( $this->ttl < 0 )
+            if ( $this->according ) {
+
+                $this->ttl = $this->getTTLFromAttribute(
+                    $model,
+                    $this->according
+                );
+            }            
+            else if ( $this->ttl < 0 ) {
+
                 $this->index( $model );
+            }
 
             $this->storeModelInCache( $model );
             $this->clearSettings();
@@ -446,7 +464,7 @@ class BaseRepository implements RepositoryInterface {
         catch ( \Exception $e ) {
 
             $this->handleCacheException( $e );
-        }   
+        }  
 
     }
 
