@@ -111,7 +111,7 @@ class BaseRepository implements RepositoryInterface {
         if ( $this->model ) {
 
             $this->ttl = $this->getTTLFromAttribute( 
-                $model,
+                $this->model,
                 $attribute
             );
 
