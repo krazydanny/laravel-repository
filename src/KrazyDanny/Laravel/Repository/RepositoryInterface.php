@@ -24,7 +24,7 @@ interface RepositoryInterface {
 
 
 	// Does almost the same as during() but it reads the amount of seconds from a given model's attribute
-	public function according ( string $attribute )
+	public function according ( string $attribute );
 
 
 	// remembers object or queries in cache forever. 
