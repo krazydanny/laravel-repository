@@ -290,7 +290,7 @@ class BaseRepository implements RepositoryInterface {
 
     protected function clearSettings () {
 
-        $this->ttl       = $this->defaultTTL;
+        $this->ttl       = 0;
         $this->take      = false;
         $this->skip      = false;
         $this->fromCache = false;
