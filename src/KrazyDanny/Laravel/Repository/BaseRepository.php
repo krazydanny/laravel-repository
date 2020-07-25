@@ -133,9 +133,9 @@ class BaseRepository implements RepositoryInterface {
         string $attribute
     ) : int
     {
-        if ( $this->model->$attribute > 0 ) {
+        if ( $model->$attribute > 0 ) {
 
-            return (int)$this->model->$attribute;
+            return (int)$model->$attribute;
         }
 
         return 0;
@@ -210,7 +210,12 @@ class BaseRepository implements RepositoryInterface {
         if ( !$id ) 
             return null;
 
-        if ( $this->ttl != 0 || $this->fromCache ) {
+        if ( 
+            $this->ttl != 0 
+            || $this->fromCache
+            || $this->according 
+        ) 
+        {
 
             try {
 
