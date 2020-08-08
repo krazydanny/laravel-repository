@@ -880,10 +880,51 @@ class UserSettingsObserver {
 Repository Events
 -----------------
 
-An observer can also be attached repositories in order to listen some useful repository-level events.
+We can also observe the following repository-level events.
+
+- afterGet
+- afterFirst
+- afterFind
+- afterCount
+
+
+**On each call**
 
 ```php
-app( UserRepository::class )->observe( UserRepositoryObserver::class );
+$callback = function ( $cacheHit, $result ) {
+
+	if ( $cacheHit ) {
+		// do something when the query hits the cache
+	}
+	else {
+		// do something else when the query hits the database
+		// this is not for storing the model in cache, remember the repository did it for you.
+	}
+}
+
+app( UserRepository::class )->observe( $callback )->rememberForever()->get( $user_id );
+
+```
+
+**On every call**
+
+```php
+$callback = function ( $cacheHit, $result ) {
+
+	if ( $cacheHit ) {
+		// do something when the query hits the cache
+	}
+	else {
+		// do something else when the query hits the database
+		// this is not for storing the model in cache, remember the repository did it for you.
+	}
+}
+
+app( UserRepository::class )->observeAlways( 'afterGet', $callback);
+
+app( UserRepository::class )->rememberForever()->get( $user_A_id );
+
+app( UserRepository::class )->rememberForever()->get( $user_B_id );
 
 ```
 
@@ -892,75 +933,6 @@ app( UserRepository::class )->observe( UserRepositoryObserver::class );
 - Monitoring usage of our caching strategy in production environments.
 - Have a special treatment for models or query results loaded from cache than those retrieved from database.
 
-
-### cacheHit
-
-Observing this event allows us to take action when model or query result are found in cache.
-
-
-```php
-namespace App\Observers;
-
-use App\User;
-use Illuminate\Database\Eloquent\Collection;
-
-use App\Repositories\UserRepository;
-
-class UserRepositoryObserver {   
-
-    // triggered when model or query results are found in cache
-    public function cacheHit ( $mixed ) {
-
-    	// for example:
-    	if ( $mixed instanceof User ) {
-
-    		// something when a specific model was found in cache
-    	}
-    	else if ( $mixed instanceof Collection ) {
-
-    		// something when find() query results were found
-    	}
-    	else if ( \is_int($mixed) ) {
-
-    		// something when count() query result was found
-    	}
-    }
-
-    // here other observer methods
-}
-
-```
-
-### cacheMiss
-
-Also we can do something when model or query results are NOT found in cache.
-
-
-```php
-namespace App\Observers;
-
-use App\User;
-use Illuminate\Database\Eloquent\Collection;
-
-use App\Repositories\UserRepository;
-
-class UserRepositoryObserver {   
-
-    // triggered when model or query results were NOT found in cache
-    public function cacheMiss ( $mixed ) {
-
-    	if ( $mixed ) {
-
-    		// we can do something when model or query results were found in database
-    	}
-
-    	// or something else were no results were found at all
-    }
-
-    // here other observer methods
-}
-
-```
 
 <br>
 
