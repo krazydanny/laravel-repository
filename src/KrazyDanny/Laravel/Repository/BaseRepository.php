@@ -23,8 +23,8 @@ class BaseRepository implements RepositoryInterface {
     protected $fromCache     = false;
     protected $skip          = false;
     protected $take          = false;
-    protected $observer      = null;
-    protected $observerClass = null;
+    protected $observe       = null;
+    protected $observers     = [];
     protected $dbHandler     = null;
     protected $cacheHandler  = null;
     protected $mute          = false;
@@ -59,29 +59,54 @@ class BaseRepository implements RepositoryInterface {
     }
 
 
-    public function observe ( string $class ) {
+    public function observeAlways ( 
+        string $event, 
+        \Closure $callback 
+    ) 
+    {
+        switch ( $event ) {
 
-        $this->observerClass = $class;
+            case 'afterGet':
+            case 'afterFind':
+            case 'afterFirst':
+            case 'afterCount':
+                break;
+            default:
+                throw new \Exception(
+                    'Unsupported event'
+                );
+
+        }
+
+        $this->observers[$event] = $callback;
+    }
+
+
+    public function observe ( 
+        \Closure $callback 
+    ) 
+    {
+        $this->observe = $callback;
+
+        return $this;
     }
 
 
     protected function fireObserverEvent (
-        string $method,
+        string $event,
+        bool $cacheHit,
         $result
     ) : bool
     {
 
-        if ( $this->observerClass ) {
+        if ( $this->observe )
+            $method = $this->observe;
+        else
+            $method = $this->observers[$event] ?? false;
 
-            if ( !$this->observer ) {
+        if ( $method ) {
 
-                $class = $this->observerClass;
-                $this->observer = new $class();
-            }
-
-            $this->observer->$method( 
-                $result 
-            );
+            $method( $cacheHit, $result );
 
             return true;
         }
@@ -234,28 +259,30 @@ class BaseRepository implements RepositoryInterface {
                 $class  = $this->class;
                 $models = $class::hydrate([$data]);
 
-                $this->clearSettings();
-
                 $model = $models[0] ?? null;
 
                 if ( $model ) {
 
-                    $this->detectObserverEvent( 
+                    $this->fireObserverEvent(
+                        'afterGet', 
                         true, 
                         $model 
                     );
                 }
 
+                $this->clearSettings();
+
                 return $model;  
             }
             else if ( $this->fromCache ) {
 
-                $this->clearSettings();
-
-                $this->detectObserverEvent( 
+                $this->fireObserverEvent(
+                    'afterGet',
                     false, 
-                    null 
+                    null
                 );
+
+                $this->clearSettings();
 
                 return null;
             }
@@ -275,7 +302,8 @@ class BaseRepository implements RepositoryInterface {
 
                     $this->storeModelInCache( $model );
 
-                    $this->detectObserverEvent( 
+                    $this->fireObserverEvent( 
+                        'afterGet',
                         false, 
                         $model 
                     );
@@ -301,6 +329,7 @@ class BaseRepository implements RepositoryInterface {
         $this->fromCache = false;
         $this->mute      = false;
         $this->according = null;
+        $this->observe   = null;
     }
 
 
@@ -418,10 +447,13 @@ class BaseRepository implements RepositoryInterface {
             ).':first'
         );
 
-        $this->detectObserverEvent( 
+        $this->fireObserverEvent( 
+            'afterFirst',
             $hit, 
             $data
         );
+
+        $this->clearSettings();
 
         if ( is_array($data) ) {
 
@@ -728,10 +760,13 @@ class BaseRepository implements RepositoryInterface {
             )            
         );
 
-        $this->detectObserverEvent( 
+        $this->fireObserverEvent( 
+            'afterFind',
             $hit, 
             $data 
         );
+
+        $this->clearSettings();
 
         if ( $data instanceof Collection )
             return $data;
@@ -767,10 +802,13 @@ class BaseRepository implements RepositoryInterface {
             ).':count'
         );
 
-        $this->detectObserverEvent( 
+        $this->fireObserverEvent( 
+            'afterCount',
             $hit, 
             $c
         );
+
+        $this->clearSettings();
 
         return $c;    
     }
@@ -1045,8 +1083,6 @@ class BaseRepository implements RepositoryInterface {
 
         if ( $this->fromCache ) {
 
-            $this->clearSettings();
-
             try {
 
                 return Cache::get( $key );            
@@ -1056,11 +1092,9 @@ class BaseRepository implements RepositoryInterface {
                 return null;
 
                 $this->handleCacheException( $e );
-            }            
+            }
         }
         else if ( $this->ttl < 0 ) {
-
-            $this->clearSettings();
 
             try {
 
@@ -1092,13 +1126,9 @@ class BaseRepository implements RepositoryInterface {
                 $this->handleCacheException( $e );
             }
 
-            $this->clearSettings();
-
             return $r;
         }
         else {
-
-            $this->clearSettings();
 
             return $callback();
         }
@@ -1211,22 +1241,6 @@ class BaseRepository implements RepositoryInterface {
         \Closure $callback
     ){
         $this->cacheHandler = $callback;
-    }
-
-
-    protected function detectObserverEvent ( 
-        bool $dbHit,
-        $mixed
-    ) {
-
-        if ( $dbHit ) {
-
-            $this->fireObserverEvent( 'cacheMiss', $mixed );
-        }
-        else if ( $mixed ) {
-
-            $this->fireObserverEvent( 'cacheHit', $mixed );
-        }
     }
 
 }

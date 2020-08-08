@@ -119,7 +119,12 @@ interface RepositoryInterface {
     );
 
 
-    public function observe ( string $class );
+    public function observe ( \Closure $callback  );
+
+    public function observeAlways ( 
+    	string $event,
+    	\Closure $callback  
+    );
 
 
     public function silently ( );
