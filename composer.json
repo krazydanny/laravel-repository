@@ -11,7 +11,9 @@
     ],
     "minimum-stability": "dev",
     "autoload": {
-        "psr-4": {"KrazyDanny\\Laravel\\Repository\\": "src/"}
+        "psr-4": {
+            "KrazyDanny\\Laravel\\Repository\\": "src/"
+        }
     },
-    "require": {}
+    "require": {}  
 }
