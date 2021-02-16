@@ -847,7 +847,8 @@ class BaseRepository implements RepositoryInterface {
             return $this->cachePrefix.':q:'.$queryBuilder->getQuery()->generateCacheKey();    
         }
         else {
-            $this->cachePrefix.':q:all'
+
+            $this->cachePrefix.':q:all';
         }
     }
 
