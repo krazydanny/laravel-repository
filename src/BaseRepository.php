@@ -782,7 +782,7 @@ class BaseRepository implements RepositoryInterface {
             },
             $this->generateQueryCacheKey(
                 $queryBuilder
-            )            
+            )
         );
 
         $this->fireObserverEvent( 
@@ -839,11 +839,17 @@ class BaseRepository implements RepositoryInterface {
 
 
     public function generateQueryCacheKey ( 
-        Builder $queryBuilder 
+        Builder $queryBuilder = null
     ) : string 
     {
-        return $this->cachePrefix.':q:'.$queryBuilder->getQuery()->generateCacheKey();
-    }   
+        if ( $builder ) {
+
+            return $this->cachePrefix.':q:'.$queryBuilder->getQuery()->generateCacheKey();    
+        }
+        else {
+            $this->cachePrefix.':q:all'
+        }
+    }
 
 
     protected function storeModelInCache ( 
