@@ -842,7 +842,7 @@ class BaseRepository implements RepositoryInterface {
         Builder $queryBuilder = null
     ) : string 
     {
-        if ( $builder ) {
+        if ( $queryBuilder ) {
 
             return $this->cachePrefix.':q:'.$queryBuilder->getQuery()->generateCacheKey();    
         }
