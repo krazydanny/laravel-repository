@@ -68,22 +68,22 @@ Make sure you have properly configured a cache connection and driver in your Lar
 
  Laravel  | Package
 :---------|:----------
- 5.6.x    | 1.1.8
- 5.7.x    | 1.1.8
- 5.8.x    | 1.1.8
- 6.x      | 1.1.8
- 7.x      | 1.1.8
+ 5.6.x    | 1.1.9
+ 5.7.x    | 1.1.9
+ 5.8.x    | 1.1.9
+ 6.x      | 1.1.9
+ 7.x      | 1.1.9
 
 
 ### Lumen version Compatibility
 
  Lumen    | Package
 :---------|:----------
- 5.6.x    | 1.1.8
- 5.7.x    | 1.1.8
- 5.8.x    | 1.1.8
- 6.x      | 1.1.8
- 7.x      | 1.1.8
+ 5.6.x    | 1.1.9
+ 5.7.x    | 1.1.9
+ 5.8.x    | 1.1.9
+ 6.x      | 1.1.9
+ 7.x      | 1.1.9
 
 
 
