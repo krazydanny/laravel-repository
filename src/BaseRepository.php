@@ -737,23 +737,48 @@ class BaseRepository implements RepositoryInterface {
 
 
     public function find ( 
-        Builder $queryBuilder 
+        Builder $queryBuilder = null 
     ) : Collection 
     {
-        $ttl  = $this->ttl;
-        $hit  = true;
 
-        $data = $this->query(
+        $class = $this->class;        
+        $ttl   = $this->ttl;
+        $hit   = true;
+
+        $data  = $this->query(
             $queryBuilder,
-            function () use ( $queryBuilder, $ttl, $hit ) {
+            function () use ( 
+                $class, 
+                $queryBuilder, 
+                $ttl, 
+                $hit 
+            ) 
+            {
 
                 $hit = false;
 
                 if ( $ttl == 0 ) {
-                    return $queryBuilder->get();
+
+                    if ( $queryBuilder ) {
+
+                        return $queryBuilder->get();    
+                    }
+                    else {
+
+                        $class::all();
+                    }
+                    
                 }
 
-                return $queryBuilder->get()->toArray();
+                if ( $queryBuilder ) {
+
+                    return $queryBuilder->get()->toArray();    
+                }
+                else {
+
+                    $class::all()->toArray();
+                }
+                
             },
             $this->generateQueryCacheKey(
                 $queryBuilder
@@ -774,10 +799,9 @@ class BaseRepository implements RepositoryInterface {
         if ( !$data )
             $data = [];
 
-        $class = $this->class;
         $class::unguard();
 
-        $models = $class::hydrate($data);
+        $models = $class::hydrate( $data );
 
         $class::reguard();
 
