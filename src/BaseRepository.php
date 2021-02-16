@@ -756,7 +756,7 @@ class BaseRepository implements RepositoryInterface {
             $cacheKey = $this->generateQueryCacheKey();
         }
 
-        $data     = $this->query(
+        $data = $this->query(
             $queryBuilder,
             function () use ( 
                 $class, 
@@ -772,7 +772,7 @@ class BaseRepository implements RepositoryInterface {
 
                     if ( $queryBuilder ) {
 
-                        return $queryBuilder->get();    
+                        return $queryBuilder->get();
                     }
                     else {
 
@@ -791,7 +791,8 @@ class BaseRepository implements RepositoryInterface {
                 }
             },
             $cacheKey
-        );
+        ); 
+
 
         $this->fireObserverEvent( 
             'afterFind',
@@ -1105,20 +1106,22 @@ class BaseRepository implements RepositoryInterface {
 
 
     protected function query (
-        Builder $queryBuilder,
+        Builder $queryBuilder = null,
         \Closure $callback,
         string $key
     ) 
     {
-        if ( $this->skip ) {
+        $class = $this->class;
+
+        if ( $this->skip && $queryBuilder ) {
 
             $queryBuilder->skip( $this->skip );
         }
 
-        if ( $this->take ) {
+        if ( $this->take && $queryBuilder ) {
 
             $queryBuilder->take( $this->take );
-        } 
+        }
 
         if ( $this->fromCache ) {
 
