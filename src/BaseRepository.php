@@ -741,11 +741,22 @@ class BaseRepository implements RepositoryInterface {
     ) : Collection 
     {
 
-        $class = $this->class;        
-        $ttl   = $this->ttl;
-        $hit   = true;
+        $class    = $this->class;        
+        $ttl      = $this->ttl;
+        $hit      = true;
 
-        $data  = $this->query(
+        if ( $queryBuilder ) {
+
+            $cacheKey = $this->generateQueryCacheKey(
+                $queryBuilder
+            );
+        }
+        else {
+
+            $cacheKey = $this->generateQueryCacheKey();
+        }
+
+        $data     = $this->query(
             $queryBuilder,
             function () use ( 
                 $class, 
@@ -778,11 +789,8 @@ class BaseRepository implements RepositoryInterface {
 
                     $class::all()->toArray();
                 }
-                
             },
-            $this->generateQueryCacheKey(
-                $queryBuilder
-            )
+            $cacheKey
         );
 
         $this->fireObserverEvent( 
