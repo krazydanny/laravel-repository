@@ -848,7 +848,7 @@ class BaseRepository implements RepositoryInterface {
         }
         else {
 
-            $this->cachePrefix.':q:all';
+            return $this->cachePrefix.':q:all';
         }
     }
 
