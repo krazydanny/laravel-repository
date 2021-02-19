@@ -741,9 +741,9 @@ class BaseRepository implements RepositoryInterface {
     ) : Collection 
     {
 
-        $class    = $this->class;        
-        $ttl      = $this->ttl;
-        $hit      = true;
+        $class = $this->class;        
+        $ttl   = $this->ttl;
+        $hit   = true;
 
         if ( $queryBuilder ) {
 
@@ -776,9 +776,8 @@ class BaseRepository implements RepositoryInterface {
                     }
                     else {
 
-                        $class::all();
+                        return $class::all();
                     }
-                    
                 }
 
                 if ( $queryBuilder ) {
@@ -787,7 +786,7 @@ class BaseRepository implements RepositoryInterface {
                 }
                 else {
 
-                    $class::all()->toArray();
+                    return $class::all()->toArray();
                 }
             },
             $cacheKey
